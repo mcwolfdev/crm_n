@@ -139,10 +139,6 @@
 --}}
 
 
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewModal0">
-    Launch demo modal
-</button>
 
 @foreach($job_all as $key=>$job)
 <!-- Modal -->

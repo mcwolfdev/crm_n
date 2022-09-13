@@ -39,6 +39,14 @@ Route::prefix('/')->middleware('auth')->group(function () {
     Route::get('job/print={id}', [PrintJobController::class, 'index'])->name('job_print');
     Route::post('job/edit/', [EditJobController::class, 'edit_job'])->name('edit_job');
 
+    Route::get('job/find_job={id}', [HomeController::class, 'actionFindJob'])->name('FindJob');
+    //TODO Status buttons
+    Route::get('job/take_job={id}', [HomeController::class, 'actionTakeJob'])->name('TakeJob');
+    Route::get('job/suspend_job={id}', [HomeController::class, 'actionSuspend'])->name('SuspendJob');
+    Route::get('job/to_work_job={id}', [HomeController::class, 'actionToWork'])->name('ToWorkJob');
+    Route::get('job/done_job={id}', [HomeController::class, 'actionDone'])->name('Donejob');
+    Route::get('job/close_job={id}', [HomeController::class, 'actionClose'])->name('CloseJob');
+
     Route::post('find_client', [CreateJobController::class, 'find_client'])->name('find_client');
     Route::post('/create_job-input-fields', [CreateJobController::class, 'add_new_work'])->name('create_job_input_fields');
     Route::get('find_model/{id}', [CreateJobController::class, 'findModel']);

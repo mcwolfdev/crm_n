@@ -63,7 +63,7 @@
                                 {{--<td>{{$job->getCreatorName()}}</td>--}}
                                 <td>{{$job->getPerformerName()}}</td>
                                 <td>{{$job->created_at->format('d-M-Y')}}</td>
-                                <td><span class="job-status {{$job->status}}">@if($job->status == 'new') новий @elseif($job->status == 'on-the-job') в роботі @elseif($job->status == 'pending') в очікуванні @elseif($job->status == 'done') виконано@endif</span></td>
+                                <td><span class="job-status {{$job->status}}">@if($job->status == 'new') новий @elseif($job->status == 'on-the-job') в роботі @elseif($job->status == 'pending') в очікуванні @elseif($job->status == 'done') виконано @elseif($job->status == 'closed') закритий@endif</span></td>
                                 <td>
                                     <a href="#" id="trigger" data-bs-toggle="modal" data-bs-target="#viewModal{{$job->id}}" class="btn btn-default btn-sm"><i class="fas fa-eye"></i></a>
                                     <a href="{{route('job_edit',$job->id)}}" class="btn btn-default btn-sm"><i class="fas fa-pencil-alt"></i></a>
@@ -142,6 +142,7 @@
 
 @foreach($job_all as $key=>$job)
 <!-- Modal -->
+<div hidden>{{$kayjob = $job->id}}</div>
 <div class="modal fade" id="viewModal{{$job->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -155,7 +156,7 @@
                 [<b>{{$job->getVehicleFrameNumber()}}</b>] {{$job->getBrandName()}} - {{$job->getModelName()}}
                 <hr>
                 Виконавець: @if(empty($job->getPerformerName())) <b><не назначено></b> @else <b>{{$job->getPerformerName()}}</b>@endif<br>
-                Статус: <span class="job-status {{$job->status}}">@if($job->status == 'new') новий @elseif($job->status == 'on-the-job') в роботі @elseif($job->status == 'pending') в очікуванні @elseif($job->status == 'done') виконано@endif</span>
+                Статус: <span class="job-status {{$job->status}}">@if($job->status == 'new') новий @elseif($job->status == 'on-the-job') в роботі @elseif($job->status == 'pending') в очікуванні @elseif($job->status == 'done') виконано @elseif($job->status == 'closed') закритий@endif</span>
                 <hr>
                 <div class="card">
                     <div class="card-header ui-sortable-handle" style="cursor: move;">
@@ -168,9 +169,9 @@
                     <div class="card-body">
                         <ul class="todo-list ui-sortable" data-widget="todo-list">
                             @foreach($job->Tasks as $task)
-                            <li>
+                            <li class="@if($job->status == 'closed') done @endif">
                                 <div class="icheck-primary d-inline ml-2">
-                                    <input type="checkbox" value="" name="todo1" id="todoCheck1">
+                                    <input type="checkbox" @if($job->status == 'closed') disabled @endif value="" name="todo1" id="todoCheck1" @if($job->status == 'closed') checked @endif>
                                     <label for="todoCheck1"></label>
                                 </div>
 
@@ -178,25 +179,37 @@
 
                                 <small class="badge badge-danger"><i class="far fa-clock"></i> 2 mins</small>
 
+                                @if($job->status != 'closed')
                                 <div class="tools">
                                     <i class="fas fa-edit"></i>
                                     <i class="fas fa-trash-o"></i>
                                 </div>
+                                @endif
                             </li>
                             @endforeach
                         </ul>
                     </div>
                 </div>
-
-
-
-
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-info">В роботу</button>
-                <button type="button" class="btn btn-success">Виконано</button>
-                <button type="button" class="btn btn-warning">Відкласти</button>
-                <button type="button" class="btn btn-danger">Зачинити</button>
+                @if(empty($job->getPerformerName()))
+                    <a href="{{route('TakeJob', $kayjob)}}"><button type="button" class="btn btn-primary">Взяти в роботу</button></a>
+                @endif
+                @if($job->status == 'new')
+                    <a href="{{route('ToWorkJob', $kayjob)}}"><button type="button" class="btn btn-info">В роботу</button></a>
+                    <a href="{{route('SuspendJob', $kayjob)}}"><button type="button" class="btn btn-warning">Відкласти</button></a>
+                @endif
+                @if($job->status == 'on-the-job')
+                    <a href="{{route('Donejob', $kayjob)}}"><button type="button" class="btn btn-success">Виконано</button></a>
+                    <a href="{{route('SuspendJob', $kayjob)}}"><button type="button" class="btn btn-warning">Відкласти</button></a>
+                    <a href="{{route('CloseJob', $kayjob)}}"><button type="button" class="btn btn-danger">Зачинити</button></a>
+                @endif
+                @if($job->status == 'pending')
+                    <a href="{{route('ToWorkJob', $kayjob)}}"><button type="button" class="btn btn-info">В роботу</button></a>
+                @endif
+                @if($job->status == 'done')
+                    <a href="{{route('CloseJob', $kayjob)}}"><button type="button" class="btn btn-danger">Зачинити</button></a>
+                @endif
                 {{--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary">Save changes</button>--}}
             </div>
@@ -204,6 +217,65 @@
     </div>
 </div>
 @endforeach
+
+
+@if ($errors->any())
+    <div class="alert alert-danger" role="alert">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+@if (Session::has('success'))
+    @if(Session()->get('success') == 'done')
+
+   <script>
+        Swal.fire({
+            title: 'Робота виконана :)',
+            width: 600,
+            padding: '3em',
+            color: '#716add',
+            background: '#fff url(/img/trees.png)',
+            backdrop: `
+    rgba(0,0,123,0.4)
+    url("/img/nyan-cat.gif")
+    left top
+    no-repeat
+  `
+        })
+    </script>
+    @elseif(Session()->get('success') == 'on-the-job')
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Статус змінено',
+            showConfirmButton: false,
+            timer: 1500
+        })
+    </script>
+{{--    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        })
+
+        Toast.fire({
+            icon: 'success',
+            title: 'Signed in successfully'
+        })
+    </script>--}}
+    @endif
+@endif
+
 
     <style>
         .breadcrumbs {
@@ -296,7 +368,12 @@
         $("#id").keyup(function(event){
             if(event.keyCode == 13){
                 $("#id").click();
-                $(this).val('');
+                /*$(this).val('');*/
+                ids = $(this).val();
+                if ($(this).val() == ''){
+                    window.location = '/';
+                }
+                window.location = 'job/find_job='+ids;
             }
         });
     </script>

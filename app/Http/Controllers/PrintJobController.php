@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Job;
-use App\Models\parts;
+use App\Models\Part;
 use App\Models\Task;
 
 class PrintJobController extends Controller
@@ -23,7 +23,7 @@ class PrintJobController extends Controller
         $data['number'] = 0;
 
         $data['task_job'] = Task::where('job_id', $id)->get();
-        $data['parts_job'] = parts::where('job_id', $id)->get();
+        $data['parts_job'] = Part::where('job_id', $id)->get();
 
         return view('job.job_print', $data);
     }

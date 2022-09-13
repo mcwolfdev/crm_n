@@ -5,13 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class brand extends Model
+class Brand extends Model
 {
     use HasFactory;
-    protected $fillable = ['name'];
+    protected $guarded = [];
+    public $timestamps = true;
+
 
     public function Models()
     {
-        return $this->hasMany(models::class);
+        return $this->hasMany(Moodel::class);
     }
 }

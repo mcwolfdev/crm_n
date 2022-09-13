@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('client_vehicles', function (Blueprint $table) {
+        Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('client_id');
-            $table->bigInteger('vehicle_id');
-            $table->bigInteger('brand_id');
-            $table->bigInteger('model_id');
+            $table->unsignedInteger('task_catalogue_id');
+            $table->unsignedInteger('job_id');
+            $table->float('price');
+            $table->integer('performer_percent');
+            $table->integer('hourly_rate');
+            $table->integer('code');
 
             $table->timestamps();
         });
@@ -31,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('client_vehicles');
+        Schema::dropIfExists('tasks');
     }
 };

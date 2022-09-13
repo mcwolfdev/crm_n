@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('model_id');
-            $table->string('frame_number',17);
-            $table->string('mileage');
-            $table->string('mileage_type');
-
+            $table->unsignedInteger('moodel_id');
+            $table->unsignedInteger('client_id');
+            $table->string('frame_number',17)->nullable()->unique();
+            $table->integer('mileage')->nullable();
+            $table->string('mileage_type')->nullable();
             $table->timestamps();
         });
     }

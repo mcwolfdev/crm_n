@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VehicleController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,8 +67,8 @@ Route::prefix('/')->middleware('auth')->group(function () {
 });
 
 
-Auth::routes(['register' => false]);
-
+Auth::routes();//(['register' => false]);
+Route::get('/test', [TestController::class, 'index']);
 
 
 /*Route::get('/home', function () {

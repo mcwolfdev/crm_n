@@ -5,15 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class models extends Model
+class Moodel extends Model
 {
     use HasFactory;
     protected $fillable = ['name'];
+    protected $table = 'moodels';
 
 
 
     public function Brand(){
-        return $this->hasOne(brand::class, 'id', 'brand_id');
+        return $this->belongsTo(Brand::class);
+    }
+
+    public function Vehicles(){
+        return $this->hasMany(Vehicle::class);
     }
 
 

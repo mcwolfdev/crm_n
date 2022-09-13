@@ -6,7 +6,7 @@ use App\Models\brand;
 use App\Models\Client;
 use App\Models\client_vehicle;
 use App\Models\Job;
-use App\Models\models;
+use App\Models\Model;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\vehicle;
@@ -20,7 +20,7 @@ class ModelsController extends Controller
 
     public function index()
     {
-        $data['models_all'] = models::all();
+        $data['models_all'] = Model::all();
 
         return view('model.index_model', $data);
     }

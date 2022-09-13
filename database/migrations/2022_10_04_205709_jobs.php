@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('jobs', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->unsignedInteger('client_id');
             $table->unsignedInteger('vehicle_id');
             $table->unsignedInteger('creator_id');

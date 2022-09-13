@@ -6,7 +6,7 @@ use App\Models\brand;
 use App\Models\Client;
 use App\Models\client_vehicle;
 use App\Models\Job;
-use App\Models\models;
+use App\Models\Model;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\vehicle;
@@ -64,13 +64,13 @@ class CreateJobController extends Controller
     //Зв"язуємо модель з брендом в створені роботи job_create
     public function findModel($id)
     {
-        $model = models::where('brand_id', $id)->get();
+        $model = Model::where('brand_id', $id)->get();
         return response()->json($model);
     }
 
     public function findinfoclient($id)
     {
-        $model = models::where('brand_id', $id)->get();
+        $model = Model::where('brand_id', $id)->get();
         $data['client'] = Client::where('id', $id)->first();
         $data['vehicle'] = client_vehicle::where('client_id', $id)->get();
 
@@ -121,9 +121,9 @@ class CreateJobController extends Controller
 
         // Створюємо нову модель такої немає в БД
         $find_brand_model = brand::where('name', $brand)->first();
-        $find_model = models::where('name', $model)->first();
+        $find_model = Model::where('name', $model)->first();
         if (!$find_model || $find_model == null || empty($find_model)) {
-            models::create([
+            Model::create([
                 'name'=> $model,
                 'brand_id'=> intval($find_brand_model->id),
             ]);

@@ -8,12 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Client extends Model
 {
     use HasFactory;
-    protected $fillable = [];
     protected $guarded = [];
 
-    public function getVehicle()
+    public function Vehicles()
     {
-        return $this->hasMany(client_vehicle::class)->get();
+        return $this->hasMany(Vehicle::class );
     }
 
 }

@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Task extends Model
 {
     use HasFactory;
-    //protected $fillable = ['name', 'job_id', 'price'];
     public $timestamps = true;
     protected $guarded = [];
 

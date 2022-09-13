@@ -6,8 +6,8 @@ use App\Models\brand;
 use App\Models\Client;
 use App\Models\client_vehicle;
 use App\Models\Job;
-use App\Models\models;
-use App\Models\parts;
+use App\Models\Model;
+use App\Models\Part;
 use App\Models\parts_storage;
 use App\Models\Task;
 use App\Models\task_catalogue;
@@ -30,7 +30,7 @@ class EditJobController extends Controller
         $data['job'] = $find;
         $data['id'] = $id;
         $data['parts_all'] = parts_storage::where('quantity','>', 0)->get();
-        $data['parts_job'] = parts::where('job_id', $id)->get();
+        $data['parts_job'] = Part::where('job_id', $id)->get();
         $data['users_all'] = User::where('hidden', 0)->get();
         $data['task_job'] = Task::where('job_id', $id)->get();
         $data['norma_chas'] = '1000'; //TODO зробити таблицю з налаштуваннями нормагодин
@@ -99,13 +99,13 @@ class EditJobController extends Controller
     //Зв"язуємо модель з брендом в створені роботи job_create
     public function findModel($id)
     {
-        $model = models::where('brand_id', $id)->get();
+        $model = Model::where('brand_id', $id)->get();
         return response()->json($model);
     }
 
     public function findinfoclient($id)
     {
-        $model = models::where('brand_id', $id)->get();
+        $model = Model::where('brand_id', $id)->get();
         $data['client'] = Client::where('id', $id)->first();
         $data['vehicle'] = client_vehicle::where('client_id', $id)->get();
 
@@ -172,10 +172,10 @@ class EditJobController extends Controller
         }
 
         //оновлюємо запчастини
-        parts::where('job_id', $job_id)->delete();
+        Part::where('job_id', $job_id)->delete();
         foreach ($request->PartsFields as $key => $value) {
             //dd($request->all());
-            parts::create([
+            Part::create([
                 'job_id'            => $job_id,
                 'parts_storages_id' => $value['name'],
                 'price'             => $value['price'],

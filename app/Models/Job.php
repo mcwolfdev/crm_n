@@ -8,13 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Job extends Model
 {
     use HasFactory;
-
-    protected $fillable = ['client_id'];
     public $timestamps = true;
-    //protected $guarded = [];
+    protected $guarded = [];
 
     public function Client(){
-        return $this->hasOne(Client::class, 'id','client_id' );
+        return $this->belongsTo(Client::class);
     }
 
     public function Performer()
@@ -22,20 +20,13 @@ class Job extends Model
         return $this->hasOne(User::class, 'id', 'performer_id');
     }
 
-    public function VinFrame(){
-        return $this->hasOne(Vehicle::class, 'id', 'vehicle_id');
+    public function Vehicle(){
+        return $this->belongsTo(Vehicle::class);
     }
 
-    public function Brand(){
-        return $this->hasOne(brand::class, 'id');
-    }
-
-    public function Models(){
-        return $this->hasOne(models::class, 'id');
-    }
 
     public function Creator(){
-        return $this->hasOne(User::class, 'id', 'creator_id');
+        return $this->belongsTo(User::class, 'creator_id');
     }
 
     public function Tasks()
@@ -50,7 +41,7 @@ class Job extends Model
 
     public function getParts()
     {
-        return $this->hasMany(Parts::class, 'job_id');
+        return $this->hasMany(Part::class, 'job_id');
     }
 
     public function getClientFullName()

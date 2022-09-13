@@ -31,9 +31,25 @@ class Job extends Model
 
     public function Tasks()
     {
-        return $this->hasMany(Task::class, 'job_id');
+        return $this->belongsToMany(Task::class)->withTimestamps();
     }
 
+    public function Parts(){
+        return $this->belongsToMany(Part::class)->withTimestamps();
+    }
+
+
+
+
+    //////////
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
+    ///
     public function getTaskCatalogue()
     {
         return $this->hasMany(task_catalogue::class, 'id','task_catalogue_id');

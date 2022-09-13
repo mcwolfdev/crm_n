@@ -8,11 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Part extends Model
 {
     use HasFactory;
-    public $timestamps = true;
     protected $guarded = [];
+    public $timestamps = true;
 
-    public function getPartsStorages()
-    {
-        return $this->hasOne(parts_storage::class, 'id','parts_storages_id');
+    public function Jobs(){
+        return $this->belongsToMany(Job::class)->withTimestamps();
     }
 }

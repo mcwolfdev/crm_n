@@ -11,8 +11,8 @@ class Task extends Model
     public $timestamps = true;
     protected $guarded = [];
 
-    public function getTaskCatalogue()
-    {
-        return $this->hasOne(task_catalogue::class, 'id','task_catalogue_id');
+    public function Jobs(){
+        return $this->belongsToMany(Job::class)->withTimestamps();
     }
+
 }

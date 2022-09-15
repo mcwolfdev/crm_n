@@ -22,8 +22,8 @@ class PrintJobController extends Controller
         $data['id'] = $id;
         $data['number'] = 0;
 
-        $data['task_job'] = Task::where('job_id', $id)->get();
-        $data['parts_job'] = Part::where('job_id', $id)->get();
+        $data['task_job'] = $find->Tasks()->get();//Task::where('job_id', $id)->get();
+        $data['parts_job'] = $find->Parts()->get();//Part::where('job_id', $id)->get();
 
         return view('job.job_print', $data);
     }

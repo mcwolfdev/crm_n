@@ -50,10 +50,13 @@ Route::prefix('/')->middleware('auth')->group(function () {
 
     Route::post('find_client', [CreateJobController::class, 'find_client'])->name('find_client');
     Route::post('/create_job-input-fields', [CreateJobController::class, 'add_new_work'])->name('create_job_input_fields');
-    Route::get('find_model/{id}', [CreateJobController::class, 'findModel']);
+
 
     //TODO find
+    Route::get('find_model/{id}', [CreateJobController::class, 'findModel']);
     Route::post('find_parts/', [EditJobController::class, 'find_parts'])->name('find_parts');
+    Route::get('find_vehicle_client/{id}', [CreateJobController::class, 'find_vehicle_client']);
+    Route::get('find_vehicle_client_brand_model/{id}', [CreateJobController::class, 'find_vehicle_client_brand_model']);
     Route::post('find_jobs/', [EditJobController::class, 'find_jobs'])->name('find_jobs');
 
     //TODO Settings

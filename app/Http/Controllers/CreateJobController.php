@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\client_vehicle;
 use App\Models\Job;
 use App\Models\Model;
+use App\Models\Moodel;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\vehicle;
@@ -37,16 +38,14 @@ class CreateJobController extends Controller
     public function find_client(Request $request)
     {
 
-        /*$search = $request->search;
+        $search = $request->search;
 
-        if($search == ''){
+        /*if($search == ''){
             $employees = Client::orderby('name','asc')->select('id','name','phone')->limit(5)->get();
             //$employees = Client::where('name', $search)->get();
-        }else{
+        }else{*/
             $employees = Client::orderby('name','asc')->select('id','name','phone')->where('name', 'like', '%' .$search . '%')->limit(5)->get();
-        }
-
-
+        //}
 
         $response = array();
         foreach($employees as $employee){
@@ -57,22 +56,58 @@ class CreateJobController extends Controller
             );
         }
 
-        return response()->json($response);*/
+        return response()->json($response);
+    }
 
+    public function find_vehicle_client($id)
+    {
+        $vehicle_client = Vehicle::where('client_id', $id)->get();
+
+        $response = array();
+        foreach($vehicle_client as $vehicle){
+            $response[] = array(
+                "id"    => $vehicle->id,
+                "name"  => $vehicle->frame_number,
+                //"brand" => $vehicle->Moodel->Brand->name,
+                //"brand_id" => $vehicle->Moodel->Brand->id,
+                //"model" => $vehicle->Moodel->name,
+                //"model_id" => $vehicle->Moodel->id,
+            );
+        }
+
+        return response()->json($response);
+    }
+
+    public function find_vehicle_client_brand_model($id)
+    {
+        $vehicle_client = Vehicle::where('id', $id)->get();
+
+        $response = array();
+        foreach($vehicle_client as $vehicle){
+            $response[] = array(
+                "id"    => $vehicle->id,
+                "name"  => $vehicle->Moodel->Brand->name,
+                "brand_id" => $vehicle->Moodel->Brand->id,
+                "model" => $vehicle->Moodel->name,
+                "model_id" => $vehicle->Moodel->id,
+            );
+        }
+
+        return response()->json($response);
     }
 
     //Зв"язуємо модель з брендом в створені роботи job_create
     public function findModel($id)
     {
-        $model = Model::where('brand_id', $id)->get();
+        $model = Moodel::where('brand_id', $id)->get();
         return response()->json($model);
     }
 
     public function findinfoclient($id)
     {
-        $model = Model::where('brand_id', $id)->get();
+        $model = Moodel::where('brand_id', $id)->get();
         $data['client'] = Client::where('id', $id)->first();
-        $data['vehicle'] = client_vehicle::where('client_id', $id)->get();
+        $data['vehicle'] = vehicle::where('client_id', $id)->get();
 
         //return response()->json($model);
         return response()->json($data);
@@ -80,104 +115,56 @@ class CreateJobController extends Controller
 
     public function add_new_work(Request $request)
     {
-        //dd($request->all());
-        //dd($request->Job['performer_id']);
-        $request->validate([
-            'addMoreInputFields.*.subject' => 'required',
-            'Client' => 'required',
-            'vehicle-frame_number'=>'required',
-            'brand'=>'required',
-            'model'=>'required',
-            //'Job[\'performer_id\']'=>'required'
-        ]);
-        //dd($request->all());
-        $Client       = $request->input('Client');
-        $Phone        = $request->input('client-phone_number');
+
+        $client_name  = $request->input('Client');
+        $client_phone = $request->input('client-phone_number');
         $VIN          = $request->input('vehicle-frame_number');
-        $brand        = $request->input('brand');
-        $model        = $request->input('model');
+        $brand_name   = $request->input('brand');
+        $model_name   = $request->input('model');
         $mileage      = $request->input("Vehicle['mileage']");
         $mileage_type = $request->input('Vehicle[mileage_type]');
         $performer    = $request->input('job-performer_id');
-        $addition     = $request->input('Job[addition]');
-
-
+        $addition     = $request->input('Job_addition');
+        //dd($request->all());
         // Створюємо нового клієнта якщо такого немає в БД
-        $find_client = Client::where('id', $Client)->first();
-        if (!$find_client || $find_client == null || empty($find_client)) {
-            Client::create([
-                'name'=> $Client,
-                'phone' => $Phone,
-            ]);
-        }
-
-        // Створюємо новий бренд якщо такого немає в БД
-        $find_brand = brand::where('name', $brand)->first();
-        if (!$find_brand || $find_brand == null || empty($find_brand)) {
-            brand::create([
-                'name'=> $brand,
-            ]);
-        }
-
-        // Створюємо нову модель такої немає в БД
-        $find_brand_model = brand::where('name', $brand)->first();
-        $find_model = Model::where('name', $model)->first();
-        if (!$find_model || $find_model == null || empty($find_model)) {
-            Model::create([
-                'name'=> $model,
-                'brand_id'=> intval($find_brand_model->id),
-            ]);
-        }
-
-        // Створюємо новий vin якщо такого немає в БД
-        $find_model_for_vehicle = brand::where('name', $brand)->first();
-        $find_frame_number = vehicle::where('frame_number', $VIN)->first();
-        if (!$find_frame_number || $find_frame_number == null || empty($find_frame_number)) {
-            vehicle::create([
-                'model_id'=> intval($find_model_for_vehicle->id),
-                'frame_number' => $VIN,
-                'mileage' => $mileage,
-                'mileage_type' => $mileage_type,
-            ]);
-        }
-
-        // Створюємо нову таблицю роботи
-        $find_client_id = Client::where('id', $Client)->first();
-        $find_frame_number_id = vehicle::where('frame_number', $VIN)->first();
-        Job::create([
-            'client_id'=> intval($find_client_id->id),
-            'vehicle_id'=> intval($find_frame_number_id->id),
-            'creator_id'=> intval(Auth::id()),
-            'performer_id'=> $performer,
-            'status'=> 'new',
-            'addition'=> $addition,
-            'pay'=> 0,
-            'done_at'=> '',
+        $client = Client::firstOrCreate([
+            'name'      =>$client_name,
+            'phone'     =>$client_phone,
+            'comment'   =>''
         ]);
 
-        /*if (!$request->input('addMoreInputFields[0]subject')){
-            return redirect()->back()->withErrors('Укажите имя!');
-        }*/
+        // Створюємо новий бренд якщо такого немає в БД
+        $brand = Brand::firstOrCreate([
+            'name'=>$brand_name
+        ]);
 
-        //$find_last_job =Job::orderBy('id', 'desc')->first()->id;
-        $find_last_job = Job::all()->last()->id;
-        //dd($find_last_job);
-        foreach ($request->addMoreInputFields as $key => $value) {
-            //Task::create($value);
-            //dd($value);
-            foreach ($value as $job) {
-                Task::create([
-                    'job_id'=> $find_last_job+1,
-                    'name' => $job,
-                    'price' => null,
-                    'performer_percent'=>null,
-                    'code'=>0,
-                ]);
-                //dd($job);
-            }
-        }
+        // Створюємо нову модель такої немає в БД
+        $moodel = $brand->Models()->firstOrCreate([
+            'name'=>$model_name
+        ]);
 
-        return back()->with('success', 'New subject has been added.');
+        // Створюємо новий vin якщо такого немає в БД
+        $vehicle = $moodel->Vehicles()->firstOrCreate([
+            'frame_number'  =>$VIN
+            ],[
+            'client_id'     =>$client->id,
+            'mileage'       =>$mileage,
+            'mileage_type'  =>$mileage_type
+        ]);
+
+        // Створюємо нову таблицю роботи
+        $job = Job::firstOrCreate(
+            [   'client_id'     =>$client->id,
+                'vehicle_id'    => $vehicle->id,
+                'creator_id'    =>intval(Auth::id()),
+                'performer_id'  =>$performer,
+                'status'        =>'new',
+                'addition'      =>$addition,
+                'pay'           =>'0',
+                'done_at'       =>''
+            ]
+        );
+        return back()->with('success', 'Нова робота '.$job->id.' була додана.');
     }
 
 }

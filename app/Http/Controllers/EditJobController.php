@@ -7,10 +7,13 @@ use App\Models\Client;
 use App\Models\client_vehicle;
 use App\Models\Job;
 use App\Models\Model;
+use App\Models\Moodel;
 use App\Models\Part;
 use App\Models\parts_storage;
+use App\Models\PartsStorage;
 use App\Models\Task;
 use App\Models\task_catalogue;
+use App\Models\TaskCatalogue;
 use App\Models\User;
 use App\Models\vehicle;
 use Illuminate\Http\Request;
@@ -29,10 +32,10 @@ class EditJobController extends Controller
 
         $data['job'] = $find;
         $data['id'] = $id;
-        $data['parts_all'] = parts_storage::where('quantity','>', 0)->get();
-        $data['parts_job'] = Part::where('job_id', $id)->get();
+        $data['parts_all'] = Part::where('quantity','>', 0)->get();
+        $data['parts_job'] = $find->Parts()->get();//Part::where('job_id', $id)->get();Tasks()
         $data['users_all'] = User::where('hidden', 0)->get();
-        $data['task_job'] = Task::where('job_id', $id)->get();
+        $data['task_job']  = $find->Tasks()->get();//Task::where('job_id', $id)->get();
         $data['norma_chas'] = '1000'; //TODO зробити таблицю з налаштуваннями нормагодин
 
         return view('job.job_edit', $data);
@@ -58,9 +61,9 @@ class EditJobController extends Controller
         $search = $request->search;
 
         if($search == ''){
-            $employees = parts_storage::orderby('name','asc')->select('id','name','code','retail_price')->limit(10)->get();
+            $employees = Part::orderby('name','asc')->select('id','name','code','retail_price')->limit(10)->get();
         }else{
-            $employees = parts_storage::orderby('name','asc')->select('id','name','code','retail_price')->where('name', 'like', '%' .$search . '%')->where('quantity', '>', '0')->get();
+            $employees = Part::orderby('name','asc')->select('id','name','code','retail_price')->where('name', 'like', '%' .$search . '%')->where('quantity', '>', '0')->get();
         }
 
         $response = array();
@@ -79,7 +82,7 @@ class EditJobController extends Controller
     {
         $search = $request->search;
 
-        $employees = task_catalogue::orderby('name', 'asc')->select('id', 'name', 'code', 'price', 'performer_percent','hourly_rate')->where('name', 'like', '%' . $search . '%')->get();
+        $employees = Task::orderby('name', 'asc')->select('id', 'name', 'code', 'price', 'performer_percent','hourly_rate')->where('name', 'like', '%' . $search . '%')->get();
 
 
         $response = array();
@@ -99,15 +102,15 @@ class EditJobController extends Controller
     //Зв"язуємо модель з брендом в створені роботи job_create
     public function findModel($id)
     {
-        $model = Model::where('brand_id', $id)->get();
+        $model = Moodel::where('brand_id', $id)->get();
         return response()->json($model);
     }
 
     public function findinfoclient($id)
     {
-        $model = Model::where('brand_id', $id)->get();
+        $model = Moodel::where('brand_id', $id)->get();
         $data['client'] = Client::where('id', $id)->first();
-        $data['vehicle'] = client_vehicle::where('client_id', $id)->get();
+        $data['vehicle'] = vehicle::where('client_id', $id)->get();
 
         //return response()->json($model);
         return response()->json($data);
@@ -115,51 +118,26 @@ class EditJobController extends Controller
 
     public function edit_job(Request $request)
     {
-        //dd($request->all());
-        //dd($request->Job['performer_id']);
-        /*$request->validate([
-            'addMoreInputFields.*.subject' => 'required',
-            'Client' => 'required',
-            'vehicle-frame_number'=>'required',
-            'brand'=>'required',
-            'model'=>'required',
-            //'Job[\'performer_id\']'=>'required'
-        ]);
-
-        $Client       = $request->input('Client');
-        $Phone        = $request->input('client-phone_number');
-        $VIN          = $request->input('vehicle-frame_number');
-        $brand        = $request->input('brand');
-        $model        = $request->input('model');
-        $mileage      = $request->input("Vehicle['mileage']");
-        $mileage_type = $request->input('Vehicle[mileage_type]');
-        $performer    = $request->input('job-performer_id');
-        $addition     = $request->input('Job[addition]');*/
-
-
-
-       /* $find_last_job = Job::all()->last()->id;
-
-        foreach ($request->addMoreInputFields as $key => $value) {
-            //Task::create($value);
-            //dd($value);
-            foreach ($value as $job) {
-                Task::create([
-                    'job_id'=> $find_last_job+1,
-                    'name' => $job,
-                    'price' => null,
-                    'performer_percent'=>null,
-                    'code'=>0,
-                ]);
-                //dd($job);
-            }
-        }*/
-
         $job_id       = $request->input('job_id');
-
+        $find = Job::find($job_id);
         //оновлюємо роботи
-        Task::where('job_id', $job_id)->delete();
+        //Task::where('job_id', $job_id)->delete();
+        $find->Tasks()->sync([]);
+        //dd($request->all());
         foreach ($request->taskFields as $key => $value) {
+            $task = Task::firstOrCreate([
+                'name'              =>$value['name'],
+                'price'             =>$value['total_price_task'],
+                'performer_percent' =>$value['present'],
+                'hourly_rate'       =>$value['hourly_rate'],
+                'code'              =>$value['code']
+            ]);
+
+            $find->Tasks()->sync([
+                $task->id => ['price'=>$value['total_price_task'], 'performer_percent'=>$value['present'], 'hourly_rate'=>$value['hourly_rate']],
+            ]);
+        }
+/*        foreach ($request->taskFields as $key => $value) {
             //dd($request->taskFields);
             Task::create([
                 'job_id'            => $job_id,
@@ -169,8 +147,8 @@ class EditJobController extends Controller
                 'code'              => $value['code'],
                 'hourly_rate'       => $value['hourly_rate']
             ]);
-        }
-
+        }*/
+dd('ok');
         //оновлюємо запчастини
         Part::where('job_id', $job_id)->delete();
         foreach ($request->PartsFields as $key => $value) {
@@ -198,7 +176,7 @@ class EditJobController extends Controller
         $vehicle->mileage_type = $request->Vehicle['mileage_type'];
         $vehicle->save();
 
-        return back()->with('success', 'New subject has been added.');
+        return back()->with('success', 'Дані збережено.');
     }
 
 }

@@ -35,7 +35,7 @@ class Job extends Model
     }
 
     public function Parts(){
-        return $this->belongsToMany(Part::class)->withTimestamps();
+        return $this->belongsToMany(Part::class)->withPivot('sale_price')->withTimestamps();
     }
 
 
@@ -52,7 +52,7 @@ class Job extends Model
     ///
     public function getTaskCatalogue()
     {
-        return $this->hasMany(task_catalogue::class, 'id','task_catalogue_id');
+        return $this->hasMany(taskcatalogue::class, 'id','task_catalogue_id');
     }
 
     public function getParts()
@@ -158,9 +158,9 @@ class Job extends Model
         $PartstotalPrice = 0;
 
 
-        foreach ($this->getParts as $part) {
-            if ($part->price != 0 && $part->quantity != 0) {
-                $PartstotalPrice += ($part->price * $part->quantity);
+        foreach ($this->Parts as $part) {
+            if ($part->pivot->sale_price != 0 && $part->quantity != 0) {
+                $PartstotalPrice += ($part->pivot->sale_price * $part->quantity);
             }
         }
 
@@ -185,9 +185,9 @@ class Job extends Model
             $this->getParts;
         }*/
 
-        foreach ($this->getParts as $part) {
-            if ($part->price != 0 && $part->quantity != 0) {
-                $totalPrice += ($part->price * $part->quantity);
+        foreach ($this->Parts as $part) {
+            if ($part->pivot->sale_price != 0 && $part->quantity != 0) {
+                $totalPrice += ($part->pivot->sale_price * $part->quantity);
             }
         }
 

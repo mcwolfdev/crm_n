@@ -26,24 +26,12 @@
                                 <div class="col-md-8">
                                     <div class="form-group field-client-full_name required">
                                         <label class="control-label" for="client-full_name">ПІБ Клієнта</label>
-                                        @foreach($client_all as $c)
-                                            {{--{{$c->getVehicle()->where('client_id', 3)}}--}}
-                                            @foreach($c->getVehicle()->where('client_id', 3) as $cc)
-                                                {{$cc->vehicle_id}}
-                                            @endforeach
-                                        @endforeach
-
-
                                         <select class="js-example-basic-single form-control" id="Client"
-                                                name="Client" onchange="clientfunc(this);">
+                                                name="Client">
                                             <option></option>
-                                            @foreach($client_all as $client)
-                                                <option data-phone="{{$client->phone}}"
-                                                        data-frame="LJLTCK"
-                                                        data-brand="BRP"
-                                                        data-model="Outlander MAX XTP 1000"
-                                                        value="{{$client->id}}">{{$client->name}}</option>
-                                            @endforeach
+                                            {{--@foreach($client_all as $client)
+                                                <option value="{{$client->id}}">{{$client->name}}</option>
+                                            @endforeach--}}
 
                                         </select>
 
@@ -181,11 +169,7 @@
                                                     </ul>
                                                 </div>
                                             @endif
-                                            @if (Session::has('success'))
-                                                <div class="alert alert-success text-center">
-                                                    <p>{{ Session::get('success') }}</p>
-                                                </div>
-                                            @endif
+
                                             <table class="table table-bordered" id="dynamicAddRemove">
                                                 <tr>
                                                     <th>Найменування</th>
@@ -212,7 +196,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group field-job-addition">
                                         <label class="control-label" for="job-addition"><i class="fas fa-car-crash"></i> Пошкодження та несправності (якщо такі присутні):</label>
-                                        <textarea id="job-addition" class="form-control" name="Job[addition]" rows="6"></textarea>
+                                        <textarea id="job-addition" class="form-control" name="Job_addition" rows="6"></textarea>
 
                                         <div class="help-block"></div>
                                     </div>        </div>
@@ -270,6 +254,26 @@
             margin-bottom: 5px;
         }
     </style>
+{{--повідомлення--}}
+@if (Session::has('success'))
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+        })
+
+        Toast.fire({
+            icon: 'success',
+            title: '{{ Session::get("success") }}'
+        })
+    </script>
+    {{--<div class="alert alert-success text-center">
+        <p>{{ Session::get('success') }}</p>
+    </div>--}}
+@endif
 
 {{--multiinput--}}
 
@@ -297,36 +301,6 @@
     });
 </script>
 
-<script>
-    function clientfunc(btn) {
-        /*console.log('phone');
-        phone = $(btn).data('url');
-        console.log(phone);*/
-
-            let element = document.getElementById("Client");
-            let phone = element.options[element.selectedIndex].getAttribute("data-phone");
-            let frame = element.options[element.selectedIndex].getAttribute("data-frame");
-            let brand = element.options[element.selectedIndex].getAttribute("data-brand");
-            let model = element.options[element.selectedIndex].getAttribute("data-model");
-
-        $('#client-phone_number').val(phone);
-
-        $('#vehicle-frame_number').empty();
-        $('#vehicle-frame_number').focus;
-        $('select[name="vehicle-frame_number"]').append('<option>' +frame+ '</option>');
-
-        $('#brand').empty();
-        $('#brand').focus;
-        $('select[name="brand"]').append('<option>' +brand+ '</option>');
-
-        $('#model').empty();
-        $('#model').focus;
-        $('select[name="model"]').append('<option>' +model+ '</option>');
-
-
-    }
-
-</script>
 
 <script>
     $(document).ready(function() {
@@ -376,11 +350,10 @@
                         data : {"_token":"{{ csrf_token() }}"},
                         dataType: "json",
                         success:function(data) {
-                            console.log(data);
                             if(data){
                                 $('#model').empty();
                                 $('#model').focus;
-                                $('#model').append('<option value="">-- Select model --</option>');
+                                $('#model').append('<option value="">-- Select vin --</option>');
                                 $.each(data, function(key, value){
                                     $('select[name="model"]').append('<option value="'+ key +'">' + value.name+ '</option>');
                                 });
@@ -395,15 +368,93 @@
             });
         });
     </script>
+{{--техніка клієнта--}}
+<script>
+    $(document).ready(function() {
+        $('.js-example-basic-single').on('change', function() {
+            var stateID = $(this).val();
+            if(stateID) {
+                $.ajax({
+                    url: '/find_vehicle_client/'+stateID,
+                    type: "GET",
+                    data : {"_token":"{{ csrf_token() }}"},
+                    dataType: "json",
+                    success:function(data) {
+                        if(data){
+                            $('.vehicle-frame_number').select2({
+                                tags: true,
+                                maximumInputLength: 17,
+                                placeholder: "Оберіть Vin номер",
+                                allowClear: true
+                            });
 
-{{--<!-- Script -->
+                            $('#vehicle-frame_number').empty();
+                            $('#vehicle-frame_number').focus;
+                            $('#vehicle-frame_number').append('<option value="">-- Select model --</option>');
+                            $.each(data, function (key, value) {
+                                $('select[name="vehicle-frame_number"]').append('<option value="' + value.id + '">' + value.name + '</option>');
+                            });
+                        }else{
+                            $('#vehicle-frame_number').empty();
+                        }
+                    }
+                });
+            }else{
+                $('#vehicle-frame_number').empty();
+            }
+        });
+
+
+        $('.vehicle-frame_number').on('change', function() {
+            var stateID = $(this).val();
+            if(stateID) {
+                $.ajax({
+                    url: '/find_vehicle_client_brand_model/'+stateID,
+                    type: "GET",
+                    data : {"_token":"{{ csrf_token() }}"},
+                    dataType: "json",
+                    success:function(data) {
+                        if(data){
+
+                            $('#brand').empty();
+                            $('#brand').focus;
+                            $('#brand').append('<option value="">-- Select model --</option>');
+                            $.each(data, function(key, value){
+                                $('#brand').empty();
+                                $('#brand').focus;
+                                $('select[name="brand"]').append('<option value="'+ value.id +'">' +value.name+ '</option>');
+
+                                $('#model').empty();
+                                $('#model').focus;
+                                $('select[name="model"]').append('<option value="'+ value.model_id +'">' +value.model+ '</option>');
+
+                            });
+                        }else{
+                            $('#brand').empty();
+                        }
+                    }
+                });
+            }else{
+                $('#brand').empty();
+            }
+        });
+    });
+</script>
+
+
+<!-- Script -->
 <script type="text/javascript">
 
     // CSRF Token
     var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
     $(document).ready(function(){
 
-        $( "#selClient" ).select2({
+        $( "#Client" ).select2({
+            tags: true,
+            minimumInputLength: 3,
+            maximumInputLength: 100,
+            placeholder: "Оберіть клієнта",
+            allowClear: true,
             ajax: {
                 url: "{{route('find_client')}}",
                 type: "post",
@@ -416,14 +467,16 @@
                     };
                 },
                 processResults: function (response) {
+                    console.log(response['phone'])
                     for(let key in response) {
                         console.log(key + ":", response[key]);
                     }
-                    $('#client-phone_number').val(response);
+                    $('#client-phone_number').val(response['phone']);
                     /*console.log(response)
                     for (const key in response) {
                         console.log(key); // выводит ключи в объекте
                     }*/
+
                     return {
                         results: response
                     };
@@ -432,7 +485,7 @@
             }
 
         });
-
     });
-</script>--}}
+</script>
+
 @endsection

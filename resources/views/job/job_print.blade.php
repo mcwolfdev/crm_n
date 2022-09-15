@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -164,7 +164,7 @@
             {{$task->code}}
         </td>
         <td class="work-name">
-            {{$task->getTaskCatalogue->name}}
+            {{$task->name}}
         </td>
         <td>
             посл.
@@ -226,7 +226,7 @@
             {{$part->code}}
         </td>
         <td class="work-name">
-            {{$part->getPartsStorages->name}}
+            {{$part->name}}
         </td>
         <td>
             1
@@ -235,10 +235,10 @@
             {{$part->quantity}}
         </td>
         <td>
-            {{number_format($part->price, 2, '.', ' ')}}
+            {{number_format($part->pivot->sale_price, 2, '.', ' ')}}
         </td>
         <td>
-            {{number_format($part->price * $part->quantity, 2, '.', ' ')}}
+            {{number_format($part->pivot->sale_price * $part->quantity, 2, '.', ' ')}}
         </td>
     </tr>
     @endforeach

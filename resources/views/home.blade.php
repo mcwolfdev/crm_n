@@ -19,12 +19,9 @@
                     <a class="btn btn-warning" href="#"><i class="fas fa-search"></i> Пошук</a>
                 </div>
 
-                <div class="card-body">
+                <div style="overflow-y:auto; width:100%;" class="card-body">
 
-
-
-
-                        <table id="1122" class="table table-hover text-nowrap" style="font-size: 12px;">
+                        <table id="1122" class="table table-hover text-nowrap" style="font-size: 12px;">{{--table-layout:fixed;--}}
                             <thead>
                             <tr>
                                 <th scope="col">ID</th>
@@ -54,14 +51,12 @@
                             <tbody>
                             @foreach($job_all as $job)
                                 <tr class="{{$job->status}} cont">
-                                <th scope="row">{{$job->id}}</th>
-                                <td class="col-md-8">{{$job->getClientFullName()}}</td>
+                                <th style="white-space: normal;">{{$job->id}}</th>
+                                <td style="white-space: normal;">{{$job->getClientFullName()}}</td>
                                 <td>{{$job->getClientPhoneNumber()}}</td>
-                                <td>{{$job->getVehicleFrameNumber()}}</td>
-                                {{--<td>{{$job->getBrandName()}} - {{$job->getModelName()}}</td>--}}
-                                <td>{{$job->getBrandName()}} - {{$job->getModelName()}}</td>
-                                {{--<td>{{$job->getCreatorName()}}</td>--}}
-                                <td>{{$job->getPerformerName()}}</td>
+                                <td>{{$job->Vehicle->frame_number}}</td>
+                                <td style="white-space: normal;">{{$job->Vehicle->Moodel->Brand->name}} - {{$job->Vehicle->Moodel->name}}</td>
+                                <td style="white-space: normal;">{{$job->getPerformerName()}}</td>
                                 <td>{{$job->created_at->format('d-M-Y')}}</td>
                                 <td><span class="job-status {{$job->status}}">@if($job->status == 'new') новий @elseif($job->status == 'on-the-job') в роботі @elseif($job->status == 'pending') в очікуванні @elseif($job->status == 'done') виконано @elseif($job->status == 'closed') закритий@endif</span></td>
                                 <td>
@@ -81,65 +76,6 @@
 </div>
 
 
-
-{{--<script>
-    // после загрузки страницы
-    document.addEventListener('DOMContentLoaded', function() {
-        // элемент, содержащий контент модального окна (например, имеющий id="modal")
-        const elemModal = document.querySelector('#modal');
-        // активируем элемент в качестве модального окна с параметрами по умолчанию
-        const modal = new bootstrap.Modal(elemModal);
-        // при клике
-        document.addEventListener('click', function(e) {
-            // получим цель (элемент на который нажали)
-            const target = e.target;
-            // завершим выполнение функции, если цель не имеет атрибут data-list
-            if (!target.dataset.list) {
-                return;
-            }
-            // получим содержимое списка
-            let html = document.querySelector(target.dataset.list).innerHTML;
-            // установим .modal-body содержимое html
-            elemModal.querySelector('.modal-body').innerHTML = '<ul>' + html + '</ul>';
-            // откроем модальное окно
-            modal.show();
-        });
-    });
-</script>
-
-<ul id="list-1" class="d-none">
-    {{$job_all[0]}}
-</ul>
-<ul id="list-2" class="d-none">
-    <li>Ten</li>
-    <li>Eleven</li>
-    <li>Twelve</li>
-</ul>
-
-<button type="button" class="btn btn-primary" data-list="#list-1">modal с одним списком</button>
-<button type="button" class="btn btn-primary" data-list="#list-2">modal с другим списком</button>
-
-<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
---}}
-
-
-
 @foreach($job_all as $key=>$job)
 <!-- Modal -->
 <div hidden>{{$kayjob = $job->id}}</div>
@@ -153,7 +89,7 @@
             <div class="modal-body">
                 ПІБ клієнта: <b>{{$job->getClientFullName()}}</b><br>
                 Телефон: <b>{{$job->getClientPhoneNumber()}}</b><br>
-                [<b>{{$job->getVehicleFrameNumber()}}</b>] {{$job->getBrandName()}} - {{$job->getModelName()}}
+                [<b>{{$job->Vehicle->frame_number}}</b>] {{$job->Vehicle->Moodel->Brand->name}} - {{$job->Vehicle->Moodel->name}}
                 <hr>
                 Виконавець: @if(empty($job->getPerformerName())) <b><не назначено></b> @else <b>{{$job->getPerformerName()}}</b>@endif<br>
                 Статус: <span class="job-status {{$job->status}}">@if($job->status == 'new') новий @elseif($job->status == 'on-the-job') в роботі @elseif($job->status == 'pending') в очікуванні @elseif($job->status == 'done') виконано @elseif($job->status == 'closed') закритий@endif</span>
@@ -175,7 +111,7 @@
                                     <label for="todoCheck1"></label>
                                 </div>
 
-                                <span class="text">{{$task->getTaskCatalogue->name}}</span>
+                                <span class="text">{{$task->name}}</span>
 
                                 <small class="badge badge-danger"><i class="far fa-clock"></i> 2 mins</small>
 

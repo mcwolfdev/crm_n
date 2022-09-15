@@ -41,10 +41,10 @@ class TestController extends Controller
                 'vehicle_id' => $vehicle->id,
                 'creator_id'=>1,
                 'performer_id'=>2,
-                'status'=>'В работе',
+                'status'=>'new',
                 'addition'=>'Хз зачем это поле',
-                'pay'=>'Тоже хз почему оно инт',
-                'done_at'=>'Всот это лучше сделать датой'
+                'pay'=>'0',
+                'done_at'=>''
             ]
         );
         echo "Создали job <br>".PHP_EOL;

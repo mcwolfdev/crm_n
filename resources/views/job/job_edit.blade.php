@@ -52,14 +52,14 @@
                                 <div class="col-md-4">
                                     <div class="form-group field-vehicle-frame_number required">
                                         <label class="control-label" for="vehicle_frame_number">Номер рами</label>
-                                        <input class="form-control" name="Vehicle[frame_number]" type="text" readonly value="{{$job->getVehicleFrameNumber()}}">
+                                        <input class="form-control" name="Vehicle[frame_number]" type="text" readonly value="{{$job->Vehicle->frame_number}}">
                                         <div class="help-block"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group field-brand-name required">
                                         <label class="control-label" for="brand-name">Бренд</label>
-                                        <input class="form-control" type="text" disabled="true" value="{{$job->getBrandName()}}">
+                                        <input class="form-control" type="text" disabled="true" value="{{$job->Vehicle->Moodel->Brand->name}}">
 
                                         <div class="help-block"></div>
                                     </div>
@@ -67,7 +67,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group field-model-name required">
                                         <label class="control-label" for="model-name">Модель</label>
-                                        <input class="form-control" type="text" disabled="true" value="{{$job->getModelName()}}">
+                                        <input class="form-control" type="text" disabled="true" value="{{$job->Vehicle->Moodel->name}}">
 
 
                                         <div class="help-block"></div>
@@ -98,7 +98,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-route"></i></span>
                                             </div>
-                                            <input type="text" id="vehicle-mileage" class="form-control" name="Vehicle[mileage]" value="{{$job->VinFrame->mileage}}">
+                                            <input type="text" id="vehicle-mileage" class="form-control" name="Vehicle[mileage]" value="{{$job->Vehicle->mileage}}">
                                         </div>
                                         <div class="help-block"></div>
                                     </div>        </div>
@@ -132,20 +132,7 @@
 
                                         {{--<form action="{{ route('create_job_input_fields') }}" method="POST">--}}
 
-                                            @if ($errors->any())
-                                                <div class="alert alert-danger" role="alert">
-                                                    <ul>
-                                                        @foreach ($errors->all() as $error)
-                                                            <li>{{ $error }}</li>
-                                                        @endforeach
-                                                    </ul>
-                                                </div>
-                                            @endif
-                                            @if (Session::has('success'))
-                                                <div class="alert alert-success text-center">
-                                                    <p>{{ Session::get('success') }}</p>
-                                                </div>
-                                            @endif
+
                                             <table class="table table-bordered" id="dynamicAddRemove">
                                                 <tr>
                                                     <th>Код</th>
@@ -175,7 +162,7 @@
                                                     <td style="width: 90px;"><input id="code_task_{{$i}}" type="text" name="taskFields[{{$i}}][code]" class="task_inp form-control" value="{{$task_j->code}}">
                                                     <td>
                                                         <select id="task_{{$i}}" class="task_inp task form-control" name="taskFields[{{$i}}][name]">
-                                                            <option value="{{$task_j->getTaskCatalogue->id}}">{{$task_j->getTaskCatalogue->name}}</option>
+                                                            <option value="{{$task_j->id}}">{{$task_j->name}}</option>
                                                         </select>
                                                     </td>
                                                     <td style="width: 120px;"><input id="hour_task_{{$i}}" type="number" name="taskFields[{{$i}}][hourly_rate]" class="task_inp form-control" value="{{$task_j->hourly_rate}}">
@@ -235,12 +222,12 @@
                                                 </td>--}}
                                                 <td>
                                                     <select id="parts_{{$i}}" class="article form-control" name="PartsFields[{{$i}}][name]">
-                                                        <option value="{{$part_j->getPartsStorages->id}}">{{$part_j->getPartsStorages->name}}</option>
+                                                        <option value="{{$part_j->id}}">{{$part_j->name}}</option>
                                                     </select>
                                                 </td>
                                                 <td style="width: 100px;"><input id="qty_{{$i}}" type="number" name="PartsFields[{{$i}}][qty]" value="{{$part_j->quantity}}" class="form-control">
-                                                <td style="width: 120px;"><input id="price{{$i}}" type="number" name="PartsFields[{{$i}}][price]" value="{{$part_j->price}}" class="form-control">
-                                                <td style="width: 100px;"><input id="total_{{$i}}" readonly type="text" name="PartsFields[{{$i}}][total_price]" value="{{$part_j->price*$part_j->quantity}}" class="total_summ_parts form-control">
+                                                <td style="width: 120px;"><input id="price{{$i}}" type="number" name="PartsFields[{{$i}}][price]" value="{{$part_j->pivot->sale_price}}" class="form-control">
+                                                <td style="width: 100px;"><input id="total_{{$i}}" readonly type="text" name="PartsFields[{{$i}}][total_price]" value="{{$part_j->pivot->sale_price*$part_j->quantity}}" class="total_summ_parts form-control">
                                                 @if ($i > 0)
                                                     <td style="width: 65px;"><button type="button" class="btn btn-outline-danger remove-input-field-parts"><i class="fas fa-trash-alt"></i></button></td>
                                                 @else
@@ -335,60 +322,47 @@
             text-align: right;
         }
     </style>
-{{--<script>
-    $(document).ready(function(){
-        $('#formSubmit').click(function(e){
-            e.preventDefault();
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            });
 
-            $.ajax({
-                url: "{{route('edit_job')}}",
-                method: 'post',
-                data: {
-                    id: $('#id').val(),
-                    bot_name: $('#bot_name').val(),
-                    bot_token: $('#bot_token').val(),
-                    bot_address: $('#bot_address').val()
-                },
+{{--помилка або оновлено--}}
+@if ($errors->any())
+    <div class="alert alert-danger" role="alert">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+        })
 
-                success: function(result){
-                    if(result.errors)
-                    {
-                        $('.alert-danger').html('');
-                        $.each(result.errors, function(key, value){
-                            Swal.fire(
-                                'Ошибка!',
-                                result.errors.join("<br>").toString(),
-                                'error'
-                            );
-                            $('.alert-danger').show();
-                            $('.alert-danger').append('<li>'+value+'</li>')
-                        });
-                    }
-                    else
-                    {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Гарна робота!',
-                            text: 'Зміни збережені!',
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(function () {
-                            window.location.href= '{{asset('')}}';
-                        });
-                    }
-                }
-            });
-        });
-    });
+        Toast.fire({
+            icon: 'success',
+            title: '{{ Session::get("success") }}'
+        })
+    </script>
+@endif
+@if (Session::has('success'))
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+        })
 
-</script>--}}
-
-
+        Toast.fire({
+            icon: 'success',
+            title: '{{ Session::get("success") }}'
+        })
+    </script>
+@endif
 
 {{--multiinput--}}
 {{--робота--}}
@@ -616,7 +590,7 @@
         var select_performer_id = document.querySelector('#job_performer_id');
         var select_mileage_type = document.querySelector('#vehicle_mileage_type');
         select_performer_id.value = {{$job->creator_id}};
-        select_mileage_type.value = {{$job->VinFrame->mileage_type}};
+        select_mileage_type.value = {{$job->mileage_type}};
     </script>
 
 {{--    Control input--}}

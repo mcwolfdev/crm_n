@@ -19,7 +19,7 @@ return new class extends Migration
             $table->float('purchase_price')->default(0);
             $table->float('retail_price')->default(0);
             $table->integer('quantity')->default(0);
-            $table->enum('unit', ['шт', 'л.', 'мл.']);
+            $table->enum('unit', ['шт.', 'л.', 'мл.']);
             $table->integer('code')->nullable()->unique();
             $table->timestamps();
         });

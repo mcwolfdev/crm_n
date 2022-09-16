@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use IntlChar;
 use Itstructure\GridView\DataProviders\EloquentDataProvider;
 
 class CreateJobController extends Controller
@@ -164,6 +165,25 @@ class CreateJobController extends Controller
                 'done_at'       =>''
             ]
         );
+        //dd($request->all());
+
+        //Створюємо нові таски
+        foreach ($request->taskFields as $key => $value) {
+            //if (IntlChar::isdigit($value['name'])){
+                $task = Task::firstOrCreate([
+                    'name'              =>$value['name'],
+                    'price'             =>$value['total_price_task'],
+                    'performer_percent' =>$value['present'],
+                    'hourly_rate'       =>$value['hourly_rate'],
+                    'code'              =>$value['code']
+                ]);
+            //}
+
+
+            $find->Tasks()->sync([
+                $task->id => ['price'=>$value['total_price_task'], 'performer_percent'=>$value['present'], 'hourly_rate'=>$value['hourly_rate']],
+            ]);
+        }
         return back()->with('success', 'Нова робота '.$job->id.' була додана.');
     }
 

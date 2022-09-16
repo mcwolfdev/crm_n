@@ -27,7 +27,7 @@
                                     <div class="form-group field-client-full_name required">
                                         <label class="control-label" for="client-full_name">ПІБ Клієнта</label>
                                         <select class="js-example-basic-single form-control" id="Client"
-                                                name="Client">
+                                                name="Client" required oninvalid="this.setCustomValidity('Поле не може бути пустим')" oninput="setCustomValidity('')">
                                             <option></option>
                                             {{--@foreach($client_all as $client)
                                                 <option value="{{$client->id}}">{{$client->name}}</option>
@@ -48,7 +48,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-phone"></i></span>
                                             </div>
-                                            <input type="text" id="client-phone_number" name="client-phone_number" class="form-control" data-inputmask='"mask": "+380 (99) 999-99-99"' data-mask>
+                                            <input type="text" id="client-phone_number" name="client-phone_number" class="form-control" data-inputmask='"mask": "+380 (99) 999-99-99"' data-mask required oninvalid="this.setCustomValidity('Поле не може бути пустим')" oninput="setCustomValidity('')">
                                         </div>
                                         <div class="help-block"></div>
                                     </div>
@@ -60,7 +60,7 @@
                                     <div class="form-group field-vehicle-frame_number required">
                                         <label class="control-label" for="vehicle-frame_number">Номер рами</label>
                                         <select class="vehicle-frame_number form-control" id="vehicle-frame_number"
-                                                name="vehicle-frame_number">
+                                                name="vehicle-frame_number" required oninvalid="this.setCustomValidity('Поле не може бути пустим')" oninput="setCustomValidity('')">
                                             <option></option>
                                             {{--@foreach($client_all as $client)
                                                 <option data-phone="{{$client->phone}}"
@@ -75,7 +75,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group field-brand-name required">
                                         <label class="control-label" for="brand-name">Бренд</label>
-                                        <select class="brand form-control" id="brand" name="brand">
+                                        <select class="brand form-control" id="brand" name="brand" required oninvalid="this.setCustomValidity('Поле не може бути пустим')" oninput="setCustomValidity('')">
                                             <option></option>
                                             @foreach($brands_all as $brand)
                                                 <option value="{{$brand->id}}">{{$brand->name}}</option>
@@ -89,7 +89,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group field-model-name required">
                                         <label class="control-label" for="model-name">Модель</label>
-                                        <select class="model form-control" id="model" name="model">
+                                        <select class="model form-control" id="model" name="model" required oninvalid="this.setCustomValidity('Поле не може бути пустим')" oninput="setCustomValidity('')">
                                             <option></option>
                                             {{--@foreach($models_brand as $mod_brand)
                                                 <option value="{{$mod_brand->id}}">{{$mod_brand->name}}</option>
@@ -150,7 +150,7 @@
 
 
                             <div class="task-wrapper">
-                                <div class="task">
+                                <div class="task_line">
                                     <span class="line"></span>
                                     <span class="title">Робота</span>
                                 </div>
@@ -176,9 +176,15 @@
                                                     <th>Дія</th>
                                                 </tr>
                                                 <tr>
-                                                    <td><input type="text" required oninvalid="this.setCustomValidity('Заповніть це поле')" oninput="setCustomValidity('')" name="addMoreInputFields[0][subject]" placeholder="Введіть назву" class="form-control " />
+                                                    {{--<td>
+                                                        <input type="text" required oninvalid="this.setCustomValidity('Заповніть це поле')" oninput="setCustomValidity('')" name="addMoreInputFields[0][subject]" placeholder="Введіть назву" class="form-control " />
+                                                    </td>--}}
+                                                    <td>
+                                                        <select id="task_0" required oninvalid="this.setCustomValidity('Поле не може бути пустим')" oninput="setCustomValidity('')" class="task_inp task form-control" name="taskFields[0][name]">
+                                                            <option></option>
+                                                        </select>
                                                     </td>
-                                                    <td><button type="button" name="add" id="dynamic-ar" class="btn btn-outline-primary"><i class="fa fa-plus"></i></button></td>
+                                                    <td style="width: 65px;"><button type="button" name="add" id="dynamic-ar" class="btn btn-outline-primary"><i class="fa fa-plus"></i></button></td>
                                                 </tr>
                                             </table>
                                             {{--<button type="submit" class="btn btn-outline-success btn-block">Save</button>--}}
@@ -187,7 +193,7 @@
                                         <div class="help-block"></div>
                                     </div>        </div>
 
-                                <div class="task">
+                                <div class="task_line">
                                     <span class="line"></span>
                                 </div>
                             </div>
@@ -228,7 +234,7 @@
             border-radius: 4px;
         }
 
-        .task-wrapper > .task > .title {
+        .task-wrapper > .task_line > .title {
             position: relative;
             z-index: 2;
             font-size: 25px;
@@ -237,7 +243,7 @@
             padding: 0 12px 0 10px;
         }
 
-        .task-wrapper > .task > .line {
+        .task-wrapper > .task_line > .line {
             display: inline-block;
             border-top: 2px dashed rgba(0,0,0,0.24);
             height: 2px;
@@ -247,7 +253,7 @@
             top: 17px;
         }
 
-        .task-wrapper > .task {
+        .task-wrapper > .task_line {
             text-align: center;
             position: relative;
             height: 30px;
@@ -281,12 +287,37 @@
     var i = 0;
     $("#dynamic-ar").click(function () {
         ++i;
-        $("#dynamicAddRemove").append('<tr><td><input type="text" name="addMoreInputFields[' + i +
-            '][subject]" placeholder="Введіть назву" class="form-control" /></td><td><button type="button" class="btn btn-outline-danger remove-input-field"><i class="fas fa-trash-alt"></i></button></td></tr>'
+        $("#dynamicAddRemove").append('<tr><td><select id="task_'+i+'" class="task_inp task form-control" name="taskFields['+i+'][name]"><option></option></select></td><td><button type="button" class="btn btn-outline-danger remove-input-field"><i class="fas fa-trash-alt"></i></button></td></tr>'
         );
+        /* оновити пошук при додаванні */
+        $('.task').select2({
+            minimumInputLength: 3,
+            maximumInputLength: 100,
+            placeholder: "Оберіть послугу",
+            ajax: {
+                url: "{{route('find_jobs')}}",
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        _token: CSRF_TOKEN,
+                        search: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    console.log(response)
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
     });
     $(document).on('click', '.remove-input-field', function () {
         $(this).parents('tr').remove();
+        --i;
     });
 </script>
 
@@ -467,16 +498,10 @@
                     };
                 },
                 processResults: function (response) {
-                    console.log(response['phone'])
+                    /*console.log(response['phone'])
                     for(let key in response) {
                         console.log(key + ":", response[key]);
-                    }
-                    $('#client-phone_number').val(response['phone']);
-                    /*console.log(response)
-                    for (const key in response) {
-                        console.log(key); // выводит ключи в объекте
                     }*/
-
                     return {
                         results: response
                     };
@@ -484,6 +509,36 @@
                 cache: true
             }
 
+        });
+
+        $('.task').select2({
+            minimumInputLength: 3,
+            maximumInputLength: 100,
+            placeholder: "Оберіть послугу",
+            ajax: {
+                url: "{{route('find_jobs')}}",
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        _token: CSRF_TOKEN,
+                        search: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+
+        });
+
+        $('#Client').on('select2:select', function (e) {
+            var data = e.params.data;
+            document.querySelector('#client-phone_number').value = data.phone;
         });
     });
 </script>

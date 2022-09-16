@@ -590,7 +590,7 @@
         var select_performer_id = document.querySelector('#job_performer_id');
         var select_mileage_type = document.querySelector('#vehicle_mileage_type');
         select_performer_id.value = {{$job->creator_id}};
-        select_mileage_type.value = {{$job->mileage_type}};
+        select_mileage_type.value = {{$job->Vehicle->mileage_type}};
     </script>
 
 {{--    Control input--}}

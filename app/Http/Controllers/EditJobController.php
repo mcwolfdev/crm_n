@@ -122,7 +122,7 @@ class EditJobController extends Controller
         $find = Job::find($job_id);
         //оновлюємо роботи
         //Task::where('job_id', $job_id)->delete();
-        $find->Tasks()->sync([]);
+        //$find->Tasks()->sync([]);
         //dd($request->all());
         foreach ($request->taskFields as $key => $value) {
             $task = Task::firstOrCreate([

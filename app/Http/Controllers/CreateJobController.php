@@ -168,22 +168,22 @@ class CreateJobController extends Controller
         //dd($request->all());
 
         //Створюємо нові таски
-        foreach ($request->taskFields as $key => $value) {
-            //if (IntlChar::isdigit($value['name'])){
-                $task = Task::firstOrCreate([
-                    'name'              =>$value['name'],
-                    'price'             =>$value['total_price_task'],
-                    'performer_percent' =>$value['present'],
-                    'hourly_rate'       =>$value['hourly_rate'],
-                    'code'              =>$value['code']
-                ]);
-            //}
+        /*foreach ($request->taskFields as $key => $value) {
 
-
-            $find->Tasks()->sync([
-                $task->id => ['price'=>$value['total_price_task'], 'performer_percent'=>$value['present'], 'hourly_rate'=>$value['hourly_rate']],
+            $job->Tasks()->sync([
+                $value['name'] => ['price'=>'0', 'performer_percent'=>'0', 'hourly_rate'=>'0'],
             ]);
+        }*/
+        //dd($request->taskFields);
+
+        $params = [];
+        foreach ($request->taskFields as $key => $value) {
+            $find_task = Task::where('id', $value['name'])->first();
+            array_push($params, [$value['name'] => ['price'=>$find_task->price, 'performer_percent'=>$find_task->performer_percent, 'hourly_rate'=>$find_task->hourly_rate]]);
         }
+        dd($params);
+        $job->Tasks()->sync($params);
+
         return back()->with('success', 'Нова робота '.$job->id.' була додана.');
     }
 

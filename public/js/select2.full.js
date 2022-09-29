@@ -1933,7 +1933,7 @@ S2.define('select2/selection/allowClear',[
       return;
     }
 
-    var removeAll = this.options.get('translations').get('removeAllItems');   
+    var removeAll = this.options.get('translations').get('removeAllItems');
 
     var $remove = $(
       '<span class="select2-selection__clear" title="' + removeAll() +'">' +
@@ -4690,15 +4690,16 @@ S2.define('select2/i18n/en',[],function () {
   // English
   return {
     errorLoading: function () {
-      return 'The results could not be loaded.';
+      return 'Не вдалося завантажити результати.';
     },
     inputTooLong: function (args) {
       var overChars = args.input.length - args.maximum;
 
-      var message = 'Please delete ' + overChars + ' character';
+      var message = 'Будь ласка, видаліть ' + overChars + ' літеру';
 
       if (overChars != 1) {
-        message += 's';
+        //message += 'и';
+          message = 'Будь ласка, видаліть ' + overChars + ' літер';
       }
 
       return message;
@@ -4706,30 +4707,30 @@ S2.define('select2/i18n/en',[],function () {
     inputTooShort: function (args) {
       var remainingChars = args.minimum - args.input.length;
 
-      var message = 'Please enter ' + remainingChars + ' or more characters';
+      var message = 'Будь ласка, введіть ' + remainingChars + ' або більше літер';
 
       return message;
     },
     loadingMore: function () {
-      return 'Loading more results…';
+      return 'Завантаження інших результатів…';
     },
     maximumSelected: function (args) {
-      var message = 'You can only select ' + args.maximum + ' item';
+      var message = 'Ви можете вибрати лише ' + args.maximum + ' пункт';
 
       if (args.maximum != 1) {
-        message += 's';
+        message += 'и';
       }
 
       return message;
     },
     noResults: function () {
-      return 'No results found';
+      return 'Нічого не знайдено';
     },
     searching: function () {
-      return 'Searching…';
+      return 'Пошук…';
     },
     removeAllItems: function () {
-      return 'Remove all items';
+      return 'Видалити всі елементи';
     }
   };
 });

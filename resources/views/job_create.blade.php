@@ -19,7 +19,7 @@
                 <div class="card-body">
                     <div class="job-form">
 
-                        <form action="{{ route('create_job_input_fields') }}" method="post" enctype="multipart/form-data">
+                        <form action="{{ route('create_job_input_fields') }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                             {{--<input type="hidden" name="_csrf" value="JHqK8d90WYuRtb6Mhc3N0X0hcEVwXuiZvobtgFmgBYxXO_-QrS1g4dqC7eHngIWDRBIyNzQssOuPwITtFM5NtQ==">--}}
                             @csrf
                             <div class="row client-info">
@@ -77,9 +77,9 @@
                                         <label class="control-label" for="brand-name">Бренд</label>
                                         <select class="brand form-control" id="brand" name="brand" required oninvalid="this.setCustomValidity('Поле не може бути пустим')" oninput="setCustomValidity('')">
                                             <option></option>
-                                            @foreach($brands_all as $brand)
+                                            {{--@foreach($brands_all as $brand)
                                                 <option value="{{$brand->id}}">{{$brand->name}}</option>
-                                            @endforeach
+                                            @endforeach--}}
 
                                         </select>
 
@@ -222,7 +222,28 @@
     </div>
 </div>
 
+{{--<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function () {
+        'use strict'
 
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>--}}
 
     <style>
         .breadcrumbs {
@@ -280,6 +301,83 @@
         <p>{{ Session::get('success') }}</p>
     </div>--}}
 @endif
+
+@if (Session::has('ClientChange'))
+   <script>
+       Swal.fire({
+           title: 'Ви впевнені?',
+           text: "{{ Session::get("ClientChange") }}",
+           icon: 'warning',
+           showCancelButton: true,
+           confirmButtonColor: '#3085d6',
+           cancelButtonColor: '#d33',
+           confirmButtonText: 'Yes, delete it!'
+       }).then((result) => {
+           if (result.isConfirmed) {
+               Swal.fire(
+                   'Deleted!',
+                   'Your file has been deleted.',
+                   'success'
+               )
+           }
+       })
+   </script>
+@endif
+
+{{--<script>
+
+    $(document).ready(function(){
+        $('#formSubmit').click(function(e){
+            e.preventDefault();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                url: "{{ route('create_job_input_fields') }}",
+                method: 'post',
+                data: {
+                    id: $('#id').val(),
+                    user_name: $('#user_name').val(),
+                    user_email: $('#user_email').val(),
+                },
+
+                success: function(result){
+                    if(result.errors)
+                    {
+                        $('.alert-danger').html('');
+
+                        $.each(result.errors, function(key, value){
+                            Swal.fire(
+                                'Ошибка!',
+                                '',
+                                'error'
+                            );
+                            $('.alert-danger').show();
+                            $('.alert-danger').append('<li>'+value+'</li>');
+                        });
+                    }
+                    else
+                    {
+                        $('.alert-danger').hide();
+                        $('#exampleModal').modal('hide');
+
+                        Swal.fire(
+                            'Отличная работа!',
+                            'Изменения сохранени!',
+                            'success'
+                        ).then(function () {
+                            window.location.href= '{{asset('my/user_settings')}}';
+                        });
+                    }
+                }
+            });
+        });
+    });
+</script>--}}
+
 
 {{--multiinput--}}
 
@@ -416,9 +514,8 @@
                                 tags: true,
                                 maximumInputLength: 17,
                                 placeholder: "Оберіть Vin номер",
-                                allowClear: true
+                                allowClear: true,
                             });
-
                             $('#vehicle-frame_number').empty();
                             $('#vehicle-frame_number').focus;
                             $('#vehicle-frame_number').append('<option value="">-- Select model --</option>');
@@ -446,7 +543,6 @@
                     dataType: "json",
                     success:function(data) {
                         if(data){
-
                             $('#brand').empty();
                             $('#brand').focus;
                             $('#brand').append('<option value="">-- Select model --</option>');
@@ -536,9 +632,44 @@
 
         });
 
+        $('.brand').select2({
+            minimumInputLength: 2,
+            maximumInputLength: 100,
+            placeholder: "Оберіть бренд",
+            ajax: {
+                url: "{{route('find_brand')}}",
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        _token: CSRF_TOKEN,
+                        search: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+
+        });
+
+        $('#vehicle-frame_number').on('select2:select', function (e) {
+            console.log(e)
+            var data = e.params.data;
+            console.log(data)
+
+        });
+
         $('#Client').on('select2:select', function (e) {
             var data = e.params.data;
-            document.querySelector('#client-phone_number').value = data.phone;
+            if (data.phone)
+            {
+                document.querySelector('#client-phone_number').value = data.phone;
+            }
         });
     });
 </script>

@@ -27,7 +27,7 @@
                                 <div class="col-md-8">
                                     <div class="form-group field-client-full_name required">
                                         <label class="control-label" for="client-full_name">ПІБ Клієнта</label>
-                                        <input class="form-control" type="text" disabled="true" value="{{$job->getClientFullName()}}">
+                                        <input class="form-control" type="text" disabled="true" value="{{$job->Client->name}}">
 
                                         <div class="help-block">
 
@@ -159,15 +159,15 @@
                                                 @else
                                                 @foreach($task_job as $i=>$task_j)
                                                 <tr>
-                                                    <td style="width: 90px;"><input id="code_task_{{$i}}" type="text" name="taskFields[{{$i}}][code]" class="task_inp form-control" value="{{$task_j->code}}">
+                                                    <td style="width: 90px;"><input id="code_task_{{$i}}" type="text" name="taskFields[{{$i}}][code]" class="task_inp form-control" value="{{$task_j->pivot->code}}">
                                                     <td>
                                                         <select id="task_{{$i}}" class="task_inp task form-control" name="taskFields[{{$i}}][name]">
                                                             <option value="{{$task_j->id}}">{{$task_j->name}}</option>
                                                         </select>
                                                     </td>
-                                                    <td style="width: 120px;"><input id="hour_task_{{$i}}" type="number" name="taskFields[{{$i}}][hourly_rate]" class="task_inp form-control" value="{{$task_j->hourly_rate}}">
-                                                    <td style="width: 100px;"><input id="present_task_{{$i}}" type="number" max="100" name="taskFields[{{$i}}][present]" class="task_inp form-control" value="{{$task_j->performer_percent}}">
-                                                    <td style="width: 100px;"><input id="total_price_task_{{$i}}" readonly type="text" name="taskFields[{{$i}}][total_price_task]" class="total_summ_task task_inp form-control" value="{{$task_j->price}}">
+                                                    <td style="width: 120px;"><input id="hour_task_{{$i}}" type="number" name="taskFields[{{$i}}][hourly_rate]" class="task_inp form-control" value="{{$task_j->pivot->hourly_rate}}">
+                                                    <td style="width: 100px;"><input id="present_task_{{$i}}" type="number" max="100" name="taskFields[{{$i}}][present]" class="task_inp form-control" value="{{$task_j->pivot->performer_percent}}">
+                                                    <td style="width: 100px;"><input id="total_price_task_{{$i}}" readonly type="text" name="taskFields[{{$i}}][total_price_task]" class="total_summ_task task_inp form-control" value="{{$task_j->pivot->price}}">
                                                     @if ($i > 0)
                                                         <td style="width: 65px;"><button type="button" class="btn btn-outline-danger remove-input-field-parts"><i class="fas fa-trash-alt"></i></button></td>
                                                     @else
@@ -225,9 +225,9 @@
                                                         <option value="{{$part_j->id}}">{{$part_j->name}}</option>
                                                     </select>
                                                 </td>
-                                                <td style="width: 100px;"><input id="qty_{{$i}}" type="number" name="PartsFields[{{$i}}][qty]" value="{{$part_j->quantity}}" class="form-control">
+                                                <td style="width: 100px;"><input id="qty_{{$i}}" type="number" name="PartsFields[{{$i}}][qty]" value="{{$part_j->pivot->quantity}}" class="form-control">
                                                 <td style="width: 120px;"><input id="price{{$i}}" type="number" name="PartsFields[{{$i}}][price]" value="{{$part_j->pivot->sale_price}}" class="form-control">
-                                                <td style="width: 100px;"><input id="total_{{$i}}" readonly type="text" name="PartsFields[{{$i}}][total_price]" value="{{$part_j->pivot->sale_price*$part_j->quantity}}" class="total_summ_parts form-control">
+                                                <td style="width: 100px;"><input id="total_{{$i}}" readonly type="text" name="PartsFields[{{$i}}][total_price]" value="{{$part_j->pivot->sale_price*$part_j->pivot->quantity}}" class="total_summ_parts form-control">
                                                 @if ($i > 0)
                                                     <td style="width: 65px;"><button type="button" class="btn btn-outline-danger remove-input-field-parts"><i class="fas fa-trash-alt"></i></button></td>
                                                 @else

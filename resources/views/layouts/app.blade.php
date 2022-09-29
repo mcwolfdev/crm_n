@@ -27,11 +27,11 @@
     <script src="{{asset('js/sweetalert2/sweetalert2.min.js')}}"></script>
 
     <script src="{{asset('js/bootstrap.min.js')}}"></script>
-    <script src="{{asset('js/select2.js')}}"></script>
+    <script src="{{asset('js/select2.full.js')}}"></script>
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
@@ -63,6 +63,11 @@
                             @endif
                         @else
                             <li class="nav-item dropdown">
+                                <a class="nav-link" href="{{route('dashboard')}}" role="button">
+                                    Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
                                 <a class="nav-link" href="{{asset('')}}" role="button">
                                     Робота
                                 </a>
@@ -72,7 +77,9 @@
                                             Налаштування
                                         </a>
                                         <ul class="dropdown-menu dropdown-menu-dark">
+                                            <li><a class="dropdown-item" href="/settings/storage">Товари (склад)</a></li>
                                             <li><a class="dropdown-item" href="/settings/users">Персонал</a></li>
+                                            <li><a class="dropdown-item" href="/settings/departments">Відділи</a></li>
                                             <li><a class="dropdown-item" href="/settings/clients">Клієнти</a></li>
                                             <li><a class="dropdown-item" href="/settings/vehicle">Транспорті засоби</a></li>
                                             <li><a class="dropdown-item" href="/settings/brand">Бренди</a></li>
@@ -82,7 +89,7 @@
 
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
+                                    {{ Auth::user()->name }} ({{number_format(auth()->user()->getToPay(auth()->user()->id), 2, '.', ' ')}} грн.)
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdown">

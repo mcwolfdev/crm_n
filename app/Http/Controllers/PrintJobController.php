@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Job;
-use App\Models\Part;
-use App\Models\Task;
 
 class PrintJobController extends Controller
 {

@@ -20,8 +20,9 @@ return new class extends Migration
             $table->unsignedInteger('creator_id');
             $table->unsignedInteger('performer_id');
             $table->string('status');
-            $table->string('addition');
+            $table->string('addition')->default(null);
             $table->string('pay');
+            $table->float('pay_summ')->default(0);
             $table->string('done_at');
 
             $table->timestamps();

@@ -114,6 +114,23 @@ class CreateJobController extends Controller
         return response()->json($data);
     }
 
+    public function find_brand(Request $request)
+    {
+        $search = $request->search;
+
+        $employees = Brand::orderby('name', 'asc')->select('id', 'name')->where('name', 'like', '%' . $search . '%')->get();
+
+        $response = array();
+        foreach($employees as $employee){
+            $response[] = array(
+                "id"=>$employee->id,
+                "text"=>$employee->name
+            );
+        }
+        return response()->json($response);
+
+    }
+
     public function add_new_work(Request $request)
     {
 
@@ -126,32 +143,98 @@ class CreateJobController extends Controller
         $mileage_type = $request->input('Vehicle[mileage_type]');
         $performer    = $request->input('job-performer_id');
         $addition     = $request->input('Job_addition');
-        //dd($request->all());
+
+        //якщо знайдено він номер закріплений за іншим клієнтом
+        /*$veh = vehicle::where('frame_number', $VIN)->first();
+        if ($veh->frame_number == $VIN)
+        {
+            $veh = vehicle::where('frame_number', $VIN)->first();
+            $cl = Client::where('id', $veh->client_id)->first();
+            //$cl->name;
+            return back()->with('ClientChange', 'Цей Номер рами закріплений за клієнтом '.$cl->name. '. Змінити?');
+        }*/
+
+        //визначаємо зв"язані він, марку, бренд
+        $v = Vehicle::where('id', $brand_name)->first();
+        $m = Moodel::where('id', $v->moodel_id)->first();
+        $b = Brand::where('id', $m->brand_id)->first();
+
         // Створюємо нового клієнта якщо такого немає в БД
-        $client = Client::firstOrCreate([
-            'name'      =>$client_name,
-            'phone'     =>$client_phone,
-            'comment'   =>''
-        ]);
+        if (is_numeric($client_name))
+        {
+            $find_client_by_id = Client::where('id', $client_name)->first();
+            $client = Client::firstOrCreate([
+                'name'      =>$find_client_by_id->name,
+                'phone'     =>$client_phone,
+                'comment'   =>''
+            ]);
+        }
+        else
+        {
+            $client = Client::firstOrCreate([
+                'name'      =>$client_name,
+                'phone'     =>$client_phone,
+                'comment'   =>''
+            ]);
+        }
+
 
         // Створюємо новий бренд якщо такого немає в БД
-        $brand = Brand::firstOrCreate([
-            'name'=>$brand_name
-        ]);
+        if (is_numeric($brand_name))
+        {
+            //$find_brand_by_id = Brand::where('id', $brand_name)->first();
+            //$find_brand_by_id = Vehicle->Moodel->Brand->name;
+            $brand = Brand::firstOrCreate([
+                'name'=>$b->name
+            ]);
+        }
+        else
+        {
+            $brand = Brand::firstOrCreate([
+                'name'=>$brand_name
+            ]);
+        }
+
 
         // Створюємо нову модель такої немає в БД
-        $moodel = $brand->Models()->firstOrCreate([
-            'name'=>$model_name
-        ]);
+        if (is_numeric($model_name))
+        {
+            //$find_brand_by_id = Moodel::where('id', $model_name)->first();
+            $moodel = $brand->Models()->firstOrCreate([
+                'name'=>$m->name
+            ]);
+        }
+        else
+        {
+            $moodel = $brand->Models()->firstOrCreate([
+                'name'=>$model_name
+            ]);
+        }
+
 
         // Створюємо новий vin якщо такого немає в БД
-        $vehicle = $moodel->Vehicles()->firstOrCreate([
-            'frame_number'  =>$VIN
+        if (is_numeric($VIN))
+        {
+            //$find_brand_by_id = Vehicle::where('id', $VIN)->first();
+            $vehicle = $moodel->Vehicles()->firstOrCreate([
+                'frame_number'  =>$v->frame_number,
             ],[
-            'client_id'     =>$client->id,
-            'mileage'       =>$mileage,
-            'mileage_type'  =>$mileage_type
-        ]);
+                'client_id'     =>$client->id,
+                'mileage'       =>$mileage,
+                'mileage_type'  =>$mileage_type
+            ]);
+        }
+        else
+        {
+            $vehicle = $moodel->Vehicles()->firstOrCreate([
+                'frame_number'  =>$VIN
+            ],[
+                'client_id'     =>$client->id,
+                'mileage'       =>$mileage,
+                'mileage_type'  =>$mileage_type
+            ]);
+        }
+
 
         // Створюємо нову таблицю роботи
         $job = Job::firstOrCreate(
@@ -165,23 +248,13 @@ class CreateJobController extends Controller
                 'done_at'       =>''
             ]
         );
-        //dd($request->all());
-
-        //Створюємо нові таски
-        /*foreach ($request->taskFields as $key => $value) {
-
-            $job->Tasks()->sync([
-                $value['name'] => ['price'=>'0', 'performer_percent'=>'0', 'hourly_rate'=>'0'],
-            ]);
-        }*/
-        //dd($request->taskFields);
 
         $params = [];
         foreach ($request->taskFields as $key => $value) {
             $find_task = Task::where('id', $value['name'])->first();
-            array_push($params, [$value['name'] => ['price'=>$find_task->price, 'performer_percent'=>$find_task->performer_percent, 'hourly_rate'=>$find_task->hourly_rate]]);
+            $params[$value['name']] = ['price'=>$find_task->price, 'performer_percent'=>$find_task->performer_percent, 'hourly_rate'=>$find_task->hourly_rate];
         }
-        dd($params);
+
         $job->Tasks()->sync($params);
 
         return back()->with('success', 'Нова робота '.$job->id.' була додана.');

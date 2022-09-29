@@ -12,7 +12,7 @@
                         <li class="breadcrumb-item active" aria-current="page">Робота</li>
                     </ol>
                 </nav>
-            <h1>Робота</h1>
+            <h1>Робота</h1>{{--{{auth()->user()->isAdmin()}}--}}
             <div class="card">
                 <div class="card-header">
                     <a class="btn btn-success" href="/job/create"><i class="fa fa-plus"></i> Додати роботу</a>
@@ -83,13 +83,14 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Заявка № <b>{{$job->id}}</b> від <b>{{$job->created_at->format('d-M-Y')}}</b></h5>
+                <h5 class="modal-title" id="exampleModalLabel">Робота № <b>{{$job->id}}</b> від <b>{{$job->created_at->format('d-M-Y')}}</b></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 ПІБ клієнта: <b>{{$job->getClientFullName()}}</b><br>
                 Телефон: <b>{{$job->getClientPhoneNumber()}}</b><br>
-                [<b>{{$job->Vehicle->frame_number}}</b>] {{$job->Vehicle->Moodel->Brand->name}} - {{$job->Vehicle->Moodel->name}}
+                VIN: [<b>{{$job->Vehicle->frame_number}}</b>]<br>
+                Марка/Модель: <b>{{$job->Vehicle->Moodel->Brand->name}} - {{$job->Vehicle->Moodel->name}}</b>
                 <hr>
                 Виконавець: @if(empty($job->getPerformerName())) <b><не назначено></b> @else <b>{{$job->getPerformerName()}}</b>@endif<br>
                 Статус: <span class="job-status {{$job->status}}">@if($job->status == 'new') новий @elseif($job->status == 'on-the-job') в роботі @elseif($job->status == 'pending') в очікуванні @elseif($job->status == 'done') виконано @elseif($job->status == 'closed') закритий@endif</span>
@@ -113,7 +114,7 @@
 
                                 <span class="text">{{$task->name}}</span>
 
-                                <small class="badge badge-danger"><i class="far fa-clock"></i> 2 mins</small>
+                                <small class="badge badge-danger"><i class="far fa-clock"></i> {{$task->hourly_rate}} годин</small>
 
                                 @if($job->status != 'closed')
                                 <div class="tools">
@@ -138,7 +139,7 @@
                 @if($job->status == 'on-the-job')
                     <a href="{{route('Donejob', $kayjob)}}"><button type="button" class="btn btn-success">Виконано</button></a>
                     <a href="{{route('SuspendJob', $kayjob)}}"><button type="button" class="btn btn-warning">Відкласти</button></a>
-                    <a href="{{route('CloseJob', $kayjob)}}"><button type="button" class="btn btn-danger">Зачинити</button></a>
+                    {{--<a href="{{route('CloseJob', $kayjob)}}"><button type="button" class="btn btn-danger">Зачинити</button></a>--}}
                 @endif
                 @if($job->status == 'pending')
                     <a href="{{route('ToWorkJob', $kayjob)}}"><button type="button" class="btn btn-info">В роботу</button></a>
@@ -215,11 +216,9 @@
 
     <style>
         .breadcrumbs {
-            /*padding: 8px 15px;*/
-            padding: 0;
-            margin-bottom: 20px;
+            padding: 55px 0px;
+            margin-bottom: -30px;
             list-style: none;
-            background-color: #f5f5f5;
             border-radius: 4px;
         }
 

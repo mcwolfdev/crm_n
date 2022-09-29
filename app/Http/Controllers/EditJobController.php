@@ -22,6 +22,16 @@ use Itstructure\GridView\DataProviders\EloquentDataProvider;
 
 class EditJobController extends Controller
 {
+    private $user;
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+            return $next($request);
+        });
+    }
 
     public function index($id)
     {
@@ -38,7 +48,13 @@ class EditJobController extends Controller
         $data['task_job']  = $find->Tasks()->get();//Task::where('job_id', $id)->get();
         $data['norma_chas'] = '1000'; //TODO зробити таблицю з налаштуваннями нормагодин
 
-        return view('job.job_edit', $data);
+
+        //кожен (окрім адміна) користувач може переглядати тільки свої роботи
+        if (Auth::user()->id == $find->performer_id || Auth::user()->isAdmin())
+        {
+            return view('job.job_edit', $data);
+        }
+        return view('error.error_block');
     }
 
 
@@ -118,25 +134,37 @@ class EditJobController extends Controller
 
     public function edit_job(Request $request)
     {
-        $job_id       = $request->input('job_id');
-        $find = Job::find($job_id);
+        $job_id     = $request->input('job_id');
+        $find       = Job::find($job_id);
+
         //оновлюємо роботи
-        //Task::where('job_id', $job_id)->delete();
-        //$find->Tasks()->sync([]);
-        //dd($request->all());
+        $params = [];
+        //dd($request->taskFields);
         foreach ($request->taskFields as $key => $value) {
+            $find_name = Task::where('id', $value['name'])->first();
             $task = Task::firstOrCreate([
-                'name'              =>$value['name'],
+                'name'              =>$find_name->name,
+                ],[
                 'price'             =>$value['total_price_task'],
                 'performer_percent' =>$value['present'],
                 'hourly_rate'       =>$value['hourly_rate'],
                 'code'              =>$value['code']
             ]);
 
-            $find->Tasks()->sync([
-                $task->id => ['price'=>$value['total_price_task'], 'performer_percent'=>$value['present'], 'hourly_rate'=>$value['hourly_rate']],
-            ]);
+            //$find->Tasks()->sync([
+            //    $task->id => ['price'=>$value['total_price_task'], 'performer_percent'=>$value['present'], 'hourly_rate'=>$value['hourly_rate']],
+            //]);
+            $params[$value['name']] = ['job_id'=> $job_id, 'task_id' => $value['name'], 'price'=>$value['total_price_task'], 'performer_percent'=>$value['present'], 'hourly_rate'=>$value['hourly_rate']];
         }
+
+        $find->Tasks()->sync($params);
+
+        /*job_id
+        task_id
+        price
+        performer_percent
+        hourly_rate*/
+
 /*        foreach ($request->taskFields as $key => $value) {
             //dd($request->taskFields);
             Task::create([
@@ -148,20 +176,44 @@ class EditJobController extends Controller
                 'hourly_rate'       => $value['hourly_rate']
             ]);
         }*/
-dd('ok');
+
         //оновлюємо запчастини
-        Part::where('job_id', $job_id)->delete();
-        foreach ($request->PartsFields as $key => $value) {
+        //Part::where('job_id', $job_id)->delete();
+        //foreach ($request->PartsFields as $key => $value) {
             //dd($request->all());
-            Part::create([
+            /*Part::create([
                 'job_id'            => $job_id,
                 'parts_storages_id' => $value['name'],
                 'price'             => $value['price'],
                 'quantity'          => $value['qty'],
                 'code'              => $value['code'],
                 'total_price'       => $value['total_price']
-            ]);
-        }
+            ]);*/
+
+        $params = [];
+        foreach ($request->PartsFields as $value) {
+            $find_name = Part::where('id', $value['name'])->first();
+            if ($find_name){
+                $parts = Part::firstOrCreate([
+                    //'job_id'      => $job_id,
+                    'name'          => $find_name->name,
+                ],[
+                    'retail_price'  => $value['price'],
+                    'quantity'      => $value['qty'],
+                    'code'          => $value['code'],
+                    //'total_price'   => $value['total_price']*$value['qty']
+                ]);
+
+
+                //$find_task = Part::where('id', $value['name'])->first();
+                $params[$value['name']] = ['job_id'=> $job_id, 'part_id' => $value['name'], 'quantity'=>$value['qty'], 'sale_price'=>$value['price']];
+            }
+
+            $find->Parts()->sync($params);
+            }
+
+
+        //}
 
         //оновлюємо коментар та виконавця
         $jobs = Job::where('id', $job_id)->first();

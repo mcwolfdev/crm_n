@@ -28,6 +28,7 @@ class HomeController extends Controller
     {
         $data['job_all'] = Job::orderBy('status', 'ASC')->orderBy('id', 'DESC')->get();
         //return view('home',compact('job_all'));
+
         return view('home', $data);
     }
 

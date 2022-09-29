@@ -20,6 +20,9 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->boolean('hidden')->default(0);
+            $table->timestamp('dismissed');
+
+            $table->unsignedInteger('department_id')->default(null);
             $table->rememberToken();
             $table->timestamps();
         });

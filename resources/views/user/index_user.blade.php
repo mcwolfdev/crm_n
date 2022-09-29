@@ -48,11 +48,12 @@
                                 <th scope="col"><input id="id" class="form-control" style="width: 160px; height: 30px; font-size: 12px;"></th>
                                 <th scope="col"></th>
                                 <th scope="col"></th>
+                                <th scope="col"></th>
                             </tr>
                             </thead>
                             <tbody>
                             @foreach($user_all as $kay=>$user)
-                            <tr>
+                            <tr @if($user->hidden == 1) style="background-color: #ccc;" @endif>
                                 <th scope="row">{{$kay+1}}</th>
                                 <th>{{$user->id}}</th>
                                 <td>{{$user->email}}</td>
@@ -60,12 +61,14 @@
                                 @if ($user->hidden == 0)
                                     <td><i class="fas fa-check text-success"></i> (працює)</td>
                                 @elseif ($user->hidden == 1)
-                                    <td><i class="fas fa-times text-danger"></i> (звільнено)</td>
+                                    <td><i class="fas fa-times text-danger"></i> (звільнено @if(!empty($user->dismissed)) {{$user->dismissed}}@endif)</td>
                                 @endif
-                                <td>$</td>
+                                <td>{{number_format($user->getToPay($user->id), 2, '.', ' ')}} грн.</td>
+
+
                                 <td>
-                                    <a href="#"><i class="fas fa-dollar-sign"></i></a>
-                                    <a href="#"><i class="fas fa-pencil-alt"></i></a>
+                                    <a href="{{route('user_pay',$user->id)}}"><i class="fas fa-dollar-sign"></i></a>
+                                    <a href="{{route('user_edit',$user->id)}}"><i class="fas fa-pencil-alt"></i></a>
                                     <a href="#"><i class="fas fa-trash-alt"></i></a>
                                 </td>
                             </tr>
@@ -84,11 +87,9 @@
 
     <style>
         .breadcrumbs {
-            /*padding: 8px 15px;*/
-            padding: 0;
-            margin-bottom: 20px;
+            padding: 55px 0px;
+            margin-bottom: -30px;
             list-style: none;
-            background-color: #f5f5f5;
             border-radius: 4px;
         }
 

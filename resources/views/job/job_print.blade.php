@@ -111,13 +111,13 @@
             Назва техніки
         </td>
         <td width="30%">
-            {{$job->getBrandName()}}
+            {{$job->Vehicle->Moodel->Brand->name}}
         </td>
         <td width="10%">
             Модель
         </td>
         <td width="40%">
-            {{$job->getModelName()}}
+            {{$job->Vehicle->Moodel->name}}
         </td>
     </tr>
     <tr>
@@ -125,7 +125,7 @@
             Номер шасі
         </td>
         <td width="80%" colspan="3">
-            {{$job->getVehicleFrameNumber()}}
+            {{$job->Vehicle->frame_number}}
         </td>
     </tr>
 </table>
@@ -191,7 +191,7 @@
 </table>
 <br>
 
-<table class="work-data">
+<table class="work-data" @if ($parts_job->count() == 0) style="display: none;" @endif>
     <tr>
         <th>
             №
@@ -229,7 +229,7 @@
             {{$part->name}}
         </td>
         <td>
-            1
+            {{$part->unit}}
         </td>
         <td>
             {{$part->quantity}}
@@ -252,7 +252,7 @@
     </tr>
     <tr>
         <td colspan="6" class="total-price-name">
-            Зашальна сума:
+            Загальна сума:
         </td>
         <td class="total-price-value">
             {{number_format($job->getTotalPrice(),2,'.', ' ')}}
@@ -261,7 +261,7 @@
 </table>
 
 <div class="total-price-by-string">
-    Всього надано послуг, товарів на суму: (сума прописом)
+    Всього надано послуг, товарів на суму: {{$job->num2str($job->getTotalPrice())}}
 </div>
 <div style="margin-top: 15px">
     Перераховані вище роботи (послуги) виконані повністю і в строк. Замовник за обсягом, якостю і термінам надання послуг претензій не має.

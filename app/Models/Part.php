@@ -14,4 +14,5 @@ class Part extends Model
     public function Jobs(){
         return $this->belongsToMany(Job::class)->withTimestamps();
     }
+
 }

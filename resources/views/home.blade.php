@@ -17,6 +17,7 @@
                 <div class="card-header">
                     <a class="btn btn-success" href="/job/create"><i class="fa fa-plus"></i> Додати роботу</a>
                     <a class="btn btn-warning" href="#"><i class="fas fa-search"></i> Пошук</a>
+                    <a class="btn btn-info" href="#"><i class="far fa-share-square"></i> Продаж запчастин</a>
                 </div>
 
                 <div style="overflow-y:auto; width:100%;" class="card-body">
@@ -63,6 +64,7 @@
                                     <a href="#" id="trigger" data-bs-toggle="modal" data-bs-target="#viewModal{{$job->id}}" class="btn btn-default btn-sm"><i class="fas fa-eye"></i></a>
                                     <a href="{{route('job_edit',$job->id)}}" class="btn btn-default btn-sm"><i class="fas fa-pencil-alt"></i></a>
                                     <a href="{{route('job_print', $job->id)}}" class="btn btn-default btn-sm"><i class="fa fa-print" aria-hidden="true"></i></a>
+                                    <a href="#" class="btn btn-default btn-sm"><i class="far fa-list-alt"></i></a>
 
                                 </td>
                             </tr>
@@ -312,4 +314,5 @@
             }
         });
     </script>
+
 @endsection

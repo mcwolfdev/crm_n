@@ -13,17 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('provisioners', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->boolean('hidden')->default(0);
-            $table->timestamp('dismissed')->nullable();
-
-            $table->unsignedInteger('department_id')->default(null);
-            $table->rememberToken();
+            $table->string('provisioner_property');
+            $table->string('contacts');
+            $table->string('contract');
+            $table->string('description');
             $table->timestamps();
         });
     }
@@ -35,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('provisioners');
     }
 };

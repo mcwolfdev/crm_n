@@ -50,10 +50,10 @@ class Job extends Model
     ///
     ///
     ///
-    public function getTaskCatalogue()
+/*    public function getTaskCatalogue()
     {
         return $this->hasMany(taskcatalogue::class, 'id','task_catalogue_id');
-    }
+    }*/
 
     public function getParts()
     {

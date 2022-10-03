@@ -61,7 +61,7 @@ class TestController extends Controller
             'purchase_price'=> 666.88,
             'retail_price' => 777.01,
             'quantity'=>1,
-            'unit'=>'шт',
+            'unit'=>'шт.',
             'code'=>228,
         ]);
         $part2 = Part::firstOrCreate([
@@ -69,7 +69,7 @@ class TestController extends Controller
             'purchase_price'=> 228.88,
             'retail_price' => 333.01,
             'quantity'=>1,
-            'unit'=>'шт',
+            'unit'=>'шт.',
             'code'=>88,
         ]);
         $part3 = Part::firstOrCreate([
@@ -77,7 +77,7 @@ class TestController extends Controller
             'purchase_price'=> 888.88,
             'retail_price' => 1000,
             'quantity'=>1,
-            'unit'=>'шт',
+            'unit'=>'шт.',
             'code'=>99,
         ]);
         // Создадим джобсы
@@ -111,10 +111,10 @@ class TestController extends Controller
         ]);
 
         // Приаттачим к джобсу партсы и таски и нашампурим значений
-        $job->Parts()->sync( [$part->id => ['sale_price'=>100000]] );
+        $job->Parts()->sync( [$part->id => ['sale_price'=>100000, 'quantity'=>1]] );
         $job->Tasks()->sync([
-                $task->id => ['price'=>10000, 'performer_percent'=>30, 'hourly_rate'=>2000],
-                $task1->id => ['price'=>2000, 'performer_percent'=>50, 'hourly_rate'=>2000]
+                $task->id => ['price'=>10000, 'code'=>1, 'performer_percent'=>30, 'hourly_rate'=>2000],
+                $task1->id => ['price'=>2000, 'code'=>120, 'hourly_rate'=>2000]
         ]);
 
         // Sync - это привязка всего сразу а в массивах - нашампуривание данных

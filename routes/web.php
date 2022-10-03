@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddPartsStorageController;
 use App\Http\Controllers\BrandsController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\CreateJobController;
@@ -64,16 +65,24 @@ Route::prefix('/')->middleware('auth')->group(function () {
     Route::get('find_vehicle_client/{id}', [CreateJobController::class, 'find_vehicle_client']);
     Route::get('find_vehicle_client_brand_model/{id}', [CreateJobController::class, 'find_vehicle_client_brand_model']);
     Route::post('find_jobs/', [EditJobController::class, 'find_jobs'])->name('find_jobs');
+    Route::post('find_provisioner/', [AddPartsStorageController::class, 'find_provisioner'])->name('find_provisioner');
 
     //Settings
     Route::get('/settings/model', [ModelsController::class, 'index']);
+
     Route::get('/settings/storage', [StorageController::class, 'index']);
+    Route::post('/settings/storage/add_new_part', [StorageController::class, 'add_new_part'])->name('add_new_part');
+    Route::get('/settings/storage/arrival_spare_parts', [AddPartsStorageController::class, 'index'])->name('arrival_spare_parts');
+    Route::post('/settings/storage/add_arrival_spare_parts', [AddPartsStorageController::class, 'add_arrival_spare_parts'])->name('add_arrival_spare_parts');
+
     Route::get('/settings/brand', [BrandsController::class, 'index']);
     Route::get('/settings/vehicle', [VehicleController::class, 'index']);
     Route::get('/settings/clients', [ClientsController::class, 'index']);
+
     Route::get('/settings/users', [UserController::class, 'index']);
     Route::get('/settings/users/pay{id}', [UserController::class, 'user_pay'])->name('user_pay');
     Route::post('/settings/users/proces', [UserController::class, 'user_edit_proces'])->name('user_edit_proces');
+
     Route::get('/settings/departments', [DepartmentsController::class, 'index']);
     Route::get('/settings/departments/del{id}', [DepartmentsController::class, 'department_delete'])->name('department_delete');
     Route::post('/settings/departments=new', [DepartmentsController::class, 'department_new'])->name('department_new');

@@ -92,7 +92,7 @@ class UserController extends Controller
             }
             elseif ($user_work == false)
             {
-                $user->dismissed = '';
+                $user->dismissed = null;
             }
 
             $user->save();

@@ -30,6 +30,7 @@ return new class extends Migration
             $table->float('price')->default(0);
             $table->integer('performer_percent')->nullable();
             $table->integer('hourly_rate')->nullable();
+            $table->integer('code')->comment('Код задачи')->nullable();
             $table->timestamps();
         });
     }

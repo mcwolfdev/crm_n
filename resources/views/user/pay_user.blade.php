@@ -16,11 +16,11 @@
 
             <div class="card">
                 <div class="card-header">
-                    <a class="btn btn-success" href="#"><i class="fa fa-plus"></i> Додати користувача</a>
+                    <input type="date">
                     <input type="date">
                 </div>
 
-                <table id="pay" class="table table-bordered table-striped">
+                <table id="pay" class="table table-bordered table-hover dataTable dtr-inline collapsed">
                     <thead>
                     <tr>
                         <th>ID</th>

@@ -16,15 +16,16 @@ return new class extends Migration
         //Запчастини довідник
         Schema::create('parts', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('department_id');
             $table->string('name');
             $table->float('purchase_price')->default(0);
             $table->float('retail_price')->default(0);
             $table->integer('quantity')->default(0);
             $table->enum('unit', ['шт.', 'л.', 'мл.']);
             $table->integer('code')->nullable()->unique();
-            $table->integer('department_id')->nullable();
             $table->timestamps();
         });
+
         //товари з роботами
         Schema::create('job_part', function (Blueprint $table) {
             $table->id();

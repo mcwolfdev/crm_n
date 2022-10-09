@@ -59,11 +59,9 @@
 
     <style>
         .breadcrumbs {
-            /*padding: 8px 15px;*/
-            padding: 0;
-            margin-bottom: 20px;
+            padding: 55px 0px;
+            margin-bottom: -30px;
             list-style: none;
-            background-color: #f5f5f5;
             border-radius: 4px;
         }
 

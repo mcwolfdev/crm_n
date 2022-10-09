@@ -59,7 +59,7 @@
                                 <td>{{$user->email}}</td>
                                 <td>{{$user->name}}</td>
                                 @if ($user->hidden == 0)
-                                    <td><i class="fas fa-check text-success"></i> (працює)</td>
+                                    <td><i class="fas fa-check @if($user->isOnline() == 1) text-success @endif"></i> (працює)</td>
                                 @elseif ($user->hidden == 1)
                                     <td><i class="fas fa-times text-danger"></i> (звільнено @if(!empty($user->dismissed)) {{$user->dismissed}}@endif)</td>
                                 @endif

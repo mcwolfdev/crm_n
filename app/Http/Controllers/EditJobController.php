@@ -2,23 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\brand;
 use App\Models\Client;
-use App\Models\client_vehicle;
 use App\Models\Job;
-use App\Models\Model;
 use App\Models\Moodel;
 use App\Models\Part;
-use App\Models\parts_storage;
-use App\Models\PartsStorage;
 use App\Models\Task;
-use App\Models\task_catalogue;
-use App\Models\TaskCatalogue;
 use App\Models\User;
 use App\Models\vehicle;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Itstructure\GridView\DataProviders\EloquentDataProvider;
+use Illuminate\Support\Facades\Log;
 
 class EditJobController extends Controller
 {
@@ -40,8 +34,31 @@ class EditJobController extends Controller
             return view('error.404');
         }
 
+        //Записати ім"я користувача який відкрив роботу
+        if (empty($find->user_name))
+        {
+            $find->user_name = Auth::user()->name;
+            $find->save();
+        }
+
+        $find_user_freeze = User::where('name' , $find->user_name)->first();
+        //Якщо такого користувача немає
+        if ($find_user_freeze == null)
+        {
+            return back()->with('error', 'Такого користувача немає в БД.');
+        }
+
+        if (!empty($find->user_name) && $find_user_freeze->isOnline() == 0)
+        {
+            $find->user_name = Auth::user()->name;
+            $find->save();
+        }
+
+
         $data['job'] = $find;
         $data['id'] = $id;
+        $data['freeze'] = $find->user_name;
+        $data['user_freeze'] = $find_user_freeze;
         $data['parts_all'] = Part::where('quantity','>', 0)->get();
         $data['parts_job'] = $find->Parts()->get();//Part::where('job_id', $id)->get();Tasks()
         $data['users_all'] = User::where('hidden', 0)->get();
@@ -55,6 +72,18 @@ class EditJobController extends Controller
             return view('job.job_edit', $data);
         }
         return view('error.error_block');
+    }
+
+    public function unfreeze(Request $request)
+    {
+        $find = Job::findOrFail($request->id);
+        if (!$find){
+            return view('error.404');
+        }
+        $find->user_name = null;
+        //Log::info('Showing user profile for user: '. $find));
+        $find->save();
+
     }
 
 
@@ -137,6 +166,10 @@ class EditJobController extends Controller
         $job_id     = $request->input('job_id');
         $find       = Job::find($job_id);
 
+        /*if ($find->user_name != Auth::user()->name)
+        {
+            return back()->withErrors('Щось пішло не так. Ви не можете зараз редагувати :(');
+        }*/
         //оновлюємо роботи
         $params = [];
         //dd($request->taskFields);
@@ -151,44 +184,10 @@ class EditJobController extends Controller
                 'code'              =>$value['code']
             ]);
 
-            //$find->Tasks()->sync([
-            //    $task->id => ['price'=>$value['total_price_task'], 'performer_percent'=>$value['present'], 'hourly_rate'=>$value['hourly_rate']],
-            //]);
             $params[$value['name']] = ['job_id'=> $job_id, 'task_id' => $value['name'], 'price'=>$value['total_price_task'], 'performer_percent'=>$value['present'], 'hourly_rate'=>$value['hourly_rate']];
         }
 
         $find->Tasks()->sync($params);
-
-        /*job_id
-        task_id
-        price
-        performer_percent
-        hourly_rate*/
-
-/*        foreach ($request->taskFields as $key => $value) {
-            //dd($request->taskFields);
-            Task::create([
-                'job_id'            => $job_id,
-                'task_catalogue_id' => $value['name'],
-                'price'             => $value['total_price_task'],
-                'performer_percent' => $value['present'],
-                'code'              => $value['code'],
-                'hourly_rate'       => $value['hourly_rate']
-            ]);
-        }*/
-
-        //оновлюємо запчастини
-        //Part::where('job_id', $job_id)->delete();
-        //foreach ($request->PartsFields as $key => $value) {
-            //dd($request->all());
-            /*Part::create([
-                'job_id'            => $job_id,
-                'parts_storages_id' => $value['name'],
-                'price'             => $value['price'],
-                'quantity'          => $value['qty'],
-                'code'              => $value['code'],
-                'total_price'       => $value['total_price']
-            ]);*/
 
         $params = [];
         foreach ($request->PartsFields as $value) {
@@ -227,6 +226,10 @@ class EditJobController extends Controller
         $vehicle->mileage = $request->Vehicle['mileage'];
         $vehicle->mileage_type = $request->Vehicle['mileage_type'];
         $vehicle->save();
+
+        //Видаляємо користувача щоб міг редагувати інший
+        $find->user_name = null;
+        $find->save();
 
         return back()->with('success', 'Дані збережено.');
     }

@@ -15,4 +15,8 @@ class Part extends Model
         return $this->belongsToMany(Job::class)->withTimestamps();
     }
 
+    public function PartsArrival(){
+        return $this->belongsToMany(PartsArrival::class)->withTimestamps();
+    }
+
 }

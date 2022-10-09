@@ -40,7 +40,6 @@ class Job extends Model
 
 
 
-
     //////////
     ///
     ///

@@ -13,7 +13,7 @@
                         <li class="breadcrumb-item active" aria-current="page">Прихід товарів</li>
                     </ol>
                 </nav>
-            <h1>Прихід товарів</h1>
+            <h1>Прихід товарів на склад</h1>
             <div class="card" style="background-color: transparent;">
 
                 <div class="card-body">
@@ -86,7 +86,7 @@
 
                                         <div class="total">
                                             <div class="price">
-                                                <div id="total_parts"><b>Робота: --- грн.</b></div>
+                                                <div id="total_parts"><b>Всього: - грн.</b></div>
                                             </div>
                                         </div>
                                         <div class="help-block"></div>
@@ -110,7 +110,6 @@
         </div>
     </div>
 </div>
-
 
     <style>
         .breadcrumbs {
@@ -175,8 +174,8 @@
         })
 
         Toast.fire({
-            icon: 'success',
-            title: '{{ Session::get("success") }}'
+            icon: 'error',
+            title: 'Помилка @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach'
         })
     </script>
 @endif

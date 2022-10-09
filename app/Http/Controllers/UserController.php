@@ -2,23 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\brand;
-use App\Models\Client;
-use App\Models\client_vehicle;
 use App\Models\Department;
 use App\Models\Job;
-use App\Models\Model;
 use App\Models\Role;
-use App\Models\Task;
 use App\Models\User;
-use App\Models\vehicle;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
-use Itstructure\GridView\DataProviders\EloquentDataProvider;
 
 class UserController extends Controller
 {
@@ -47,14 +38,16 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'user_name'    => 'required',
             'user_email'    => 'required',
-            //'user_password' => 'required',
+            'birth_date' => 'required',
+            'phone_number' => 'required',
             'Role'          => 'required',
             'department'    => 'required',
         ],
             $messages = [
                 'user_naame.required'    => 'Поле <Ім\'я користувача> не може бути порожнім!',
                 'user_email.required'    => 'Поле <Е-мейл> не може бути порожнім!',
-                //'user_password.required' => 'Поле <Пароль> не може бути порожнім!',
+                'birth_date.required' => 'Поле <Дата народження> не може бути порожнім!',
+                'phone_number.required' => 'Поле <Телефон> не може бути порожнім!',
                 'Role.required'          => 'Поле <Роль> не може бути порожнім!',
                 'department.required'    => 'Поле <Відділ> не може бути порожнім!',
             ]);
@@ -66,8 +59,11 @@ class UserController extends Controller
 
         $user_id        = $request->input('user_id');
         $user_name      = $request->input('user_name');
+        $user_birth_date= $request->input('birth_date');
+        $user_phone     = $request->input('phone_number');
         $user_email     = $request->input('user_email');
         $user_password  = $request->input('user_password');
+        $user_rate      = $request->input('user_rate');
         $user_role      = $request->input('Role');
         $department     = $request->input('department');
         $user_work      = $request->input('work') ? true : false;
@@ -78,10 +74,16 @@ class UserController extends Controller
         //dd($user->attachRole($user_role));
         if ($user) {
             $user->name = $user_name;
+            $user->birth_date = $user_birth_date;
+            $user->phone = $user_phone;
             $user->email = $user_email;
             if (!empty($user_password))
             {
                 $user->password = Hash::make($user_password);
+            }
+            if (!empty($user_rate))
+            {
+                $user->rate = $user_rate;
             }
             $user->department_id = $department;
             $user->Roles()->sync(['role_id'=>$user_role]);

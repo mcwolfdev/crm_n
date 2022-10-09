@@ -2,6 +2,31 @@
 
 @section('content')
 
+    @if (!empty($freeze) && $freeze != auth()->user()->name)
+            <script>
+                let timerInterval
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Помилка',
+                    html: '<p>Цю роботу редагує <b>{{$freeze}}</b></p>',
+                    timer: 2500,
+                    timerProgressBar: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                }).then((result) => {
+                    /* Read more about handling dismissals below */
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        window.history.back ();
+                    }
+                })
+            </script>
+    @else
+
 
 <div class="container">
     <div class="row justify-content-center">
@@ -236,7 +261,6 @@
                                             </tr>
                                         @endforeach
                                     @endif
-
                                 </table>
                                 <div class="total">
                                     <div class="price">
@@ -263,7 +287,7 @@
                             </div>
 
                             <div class="form-group">
-                                <button type="submit" class="btn btn-success"><i class="far fa-save"></i> Зберегти</button>
+                                <button type="submit" class="btn btn-success" id="save"><i class="far fa-save"></i> Зберегти</button>
                                 <a href="{{route('job_print', $id)}}"><button type="button" class="btn btn-info"><i class="fa fa-print" aria-hidden="true"></i> Друк накладної</button></a>
                                 {{--<button id="formSubmit" type="button" class="btn btn-success"><i class="far fa-save"></i> Зберегти</button>--}}
                             </div>
@@ -391,7 +415,7 @@
                     };
                 },
                 processResults: function (response) {
-                    console.log(response)
+                    //console.log(response)
                     return {
                         results: response
                     };
@@ -703,4 +727,131 @@
 
 </script>
 
+    <script>
+
+        setIdleTimeout(5000, function() {
+            //$("#msg").text("Why you leave me?");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Сесія буде розірвана через',
+                html: '<b></b> секунд.',
+                showConfirmButton: false,
+                timer: 10000,
+                timerProgressBar: true,
+                didOpen: () => {
+                    Swal.showLoading()
+                    const b = Swal.getHtmlContainer().querySelector('b')
+                    timerInterval = setInterval(() => {
+                        b.textContent = Math.round(Swal.getTimerLeft()/1000)
+                    }, 100)
+                },
+                willClose: () => {
+                    clearInterval(timerInterval)
+                }
+            }).then(function () {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{route('unfreeze')}}",
+                    data: {
+                        id: {{$job->id}},
+                    },
+                    success: function (response) {
+                        window.location.assign("{{asset('')}}");
+                    }
+                });
+
+            });
+        }, function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Сесія відновлена',
+                showConfirmButton: false,
+                timer: 2000
+            })
+        });
+
+
+
+        function setIdleTimeout(millis, onIdle, onUnidle) {
+            var timeout = 0;
+            $(startTimer);
+
+            function startTimer() {
+                timeout = setTimeout(onExpires, millis);
+                $(document).on("mousemove keypress", onActivity);
+            }
+
+            function onExpires() {
+                timeout = 0;
+                onIdle();
+            }
+
+            function onActivity() {
+                if (timeout) clearTimeout(timeout);
+                else onUnidle();
+                //since the mouse is moving, we turn off our event hooks for 1 second
+                $(document).off("mousemove keypress", onActivity);
+                setTimeout(startTimer, 1000);
+            }
+        }
+    </script>
+
+<script>
+    window.onblur = function (){
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            type: "POST",
+            url: "{{route('unfreeze')}}",
+            data: {
+                id: {{$job->id}},
+            }
+        });
+    }
+</script>
+        {{--<script type="text/javascript">
+            var idleTime = 0;
+            $(document).ready(function () {
+            //Increment the idle time counter every minute.
+            idleInterval = setInterval(timerIncrement, 60000); // 1 minute
+
+            //Zero the idle timer on mouse movement.
+            $('body').mousemove(function (e) {
+            //alert("mouse moved" + idleTime);
+            idleTime = 0;
+        });
+
+            $('body').keypress(function (e) {
+            //alert("keypressed"  + idleTime);
+            idleTime = 0;
+        });
+
+
+
+            $('body').click(function() {
+            //alert("mouse moved" + idleTime);
+            idleTime = 0;
+        });
+
+        });
+
+            function timerIncrement() {
+            idleTime = idleTime + 1;
+            if (idleTime > 10) { // 10 minutes
+
+            window.location.assign("{{asset('')}}");
+        }
+        }
+    </script>--}}
+    @endif
 @endsection

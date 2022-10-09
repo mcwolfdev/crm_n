@@ -8,6 +8,7 @@ use App\Models\client_vehicle;
 use App\Models\Department;
 use App\Models\Job;
 use App\Models\Model;
+use App\Models\Part;
 use App\Models\Provisioner;
 use App\Models\Task;
 use App\Models\User;
@@ -23,7 +24,7 @@ class AddPartsStorageController extends Controller
     public function index()
     {
         $data['provisioner_all'] = Provisioner::all();
-        $data['parts_all'] = Provisioner::all();
+        $data['parts_all'] = Part::all();
         $data['storage_all'] = Department::all();
 
         return view('storage.add_parts_storage', $data);

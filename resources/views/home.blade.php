@@ -157,7 +157,6 @@
 </div>
 @endforeach
 
-
 @if ($errors->any())
     <div class="alert alert-danger" role="alert">
         <ul>

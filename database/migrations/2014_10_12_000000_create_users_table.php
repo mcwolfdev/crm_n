@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->float('rate')->nullable();
+            $table->date('birth_date')->nullable();
+            $table->string('phone')->nullable();
             $table->boolean('hidden')->default(0);
             $table->timestamp('dismissed')->nullable();
 

@@ -13,14 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('provisioners', function (Blueprint $table) {
+        Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('code');
-            $table->string('name');
-            $table->string('provisioner_property');
-            $table->string('contacts');
-            $table->string('contract');
-            $table->string('description');
+            $table->string('title');
+            $table->date('start');
+            $table->date('end');
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('provisioners');
+        Schema::dropIfExists('events');
     }
 };

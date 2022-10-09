@@ -75,18 +75,28 @@
                                     Робота
                                 </a>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Довідник
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="/directory/provisioner">Постачальник</a></li>
+                                    <li><a class="dropdown-item" href="/directory/storage">Товари (склад)</a></li>
+                                    <li><a class="dropdown-item" href="/directory/users">Персонал</a></li>
+                                    <li><a class="dropdown-item" href="/directory/departments">Відділи</a></li>
+                                    <li><a class="dropdown-item" href="/directory/clients">Клієнти</a></li>
+                                    <li><a class="dropdown-item" href="/directory/vehicle">Транспорті засоби</a></li>
+                                    <li><a class="dropdown-item" href="/directory/brand">Бренди</a></li>
+                                    <li><a class="dropdown-item" href="/directory/model">Моделі</a></li>
+                                </ul>
+                            </li>
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             Налаштування
                                         </a>
                                         <ul class="dropdown-menu dropdown-menu-dark">
-                                            <li><a class="dropdown-item" href="/settings/storage">Товари (склад)</a></li>
-                                            <li><a class="dropdown-item" href="/settings/users">Персонал</a></li>
-                                            <li><a class="dropdown-item" href="/settings/departments">Відділи</a></li>
-                                            <li><a class="dropdown-item" href="/settings/clients">Клієнти</a></li>
-                                            <li><a class="dropdown-item" href="/settings/vehicle">Транспорті засоби</a></li>
-                                            <li><a class="dropdown-item" href="/settings/brand">Бренди</a></li>
-                                            <li><a class="dropdown-item" href="/settings/model">Моделі</a></li>
+                                            <li><a class="dropdown-item" href="#">(поки немає)</a></li>
+
                                         </ul>
                                     </li>
 

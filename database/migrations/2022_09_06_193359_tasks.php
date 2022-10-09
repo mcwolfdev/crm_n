@@ -25,13 +25,17 @@ return new class extends Migration
         // Эта табличка связей много ко многому - все то же самое что и было только работает из коробки
         Schema::create('job_task', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('job_id');
-            $table->unsignedInteger('task_id');
+            $table->unsignedBigInteger('job_id');
+            $table->unsignedBigInteger('task_id');
             $table->float('price')->default(0);
             $table->integer('performer_percent')->nullable();
             $table->integer('hourly_rate')->nullable();
             $table->integer('code')->comment('Код задачи')->nullable();
             $table->timestamps();
+            $table->foreign('job_id')->references('id')->on('jobs')
+                ->onUpdate('cascade'); //->onDelete('cascade');
+            $table->foreign('task_id')->references('id')->on('tasks')
+                ->onUpdate('cascade');//->onDelete('cascade');
         });
     }
 
@@ -42,7 +46,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tasks');
         Schema::dropIfExists('job_task');
+        Schema::dropIfExists('tasks');
     }
 };

@@ -13,14 +13,26 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('provisioners', function (Blueprint $table) {
+        Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('code');
             $table->string('name');
-            $table->string('provisioner_property');
-            $table->string('contacts');
-            $table->string('contract');
-            $table->string('description');
+            // Переименовать или поменять поле
+            $table->text('provisioner_property')->nullable();
+
+            $table->text('contacts')->nullable();
+            $table->text('contract')->nullable();
+            $table->text('description')->nullable();
+            $table->timestamps();
+        });
+        Schema::create('part_supplier', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('part_id');
+            $table->unsignedBigInteger('supplier_id');
+            $table->foreign('part_id')->references('id')->on('parts')
+                ->onUpdate('cascade'); //->onDelete('cascade');
+            $table->foreign('supplier_id')->references('id')->on('suppliers')
+                ->onUpdate('cascade');//->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -32,6 +44,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('provisioners');
+        Schema::dropIfExists('suppliers');
     }
 };

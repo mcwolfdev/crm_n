@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('client_id');
+            $table->unsignedInteger('department_id');
             $table->unsignedInteger('vehicle_id');
             $table->unsignedInteger('creator_id');
             $table->unsignedInteger('performer_id');

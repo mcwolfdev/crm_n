@@ -157,15 +157,36 @@
 </div>
 @endforeach
 
+{{--помилка або оновлено--}}
 @if ($errors->any())
-    <div class="alert alert-danger" role="alert">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
+    <script>
+
+        Swal.fire({
+            icon: 'error',
+            title: 'Помилка',
+            html: '@foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach',
+            timer: 2500,
+            timerProgressBar: false,
+            showConfirmButton: false,
+        })
+    </script>
 @endif
+{{--@if (Session::has('success'))
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+        })
+
+        Toast.fire({
+            icon: 'success',
+            title: '{{ Session::get("success") }}'
+        })
+    </script>
+@endif--}}
 @if (Session::has('success'))
     @if(Session()->get('success') == 'done')
 
@@ -193,24 +214,6 @@
             timer: 1500
         })
     </script>
-{{--    <script>
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-        })
-
-        Toast.fire({
-            icon: 'success',
-            title: 'Signed in successfully'
-        })
-    </script>--}}
     @endif
 @endif
 
@@ -254,18 +257,6 @@
         .job-status.done {
             background-color: #66CC66;
         }
-
-        /*tbody > tr.new {
-            background: #e4e4fd;
-        }
-
-        table thead {
-            background: #fff;
-        }*/
-
-        /*.job-update table thead {
-            background: transparent;
-        }*/
 
         tr {
             background: #fff;

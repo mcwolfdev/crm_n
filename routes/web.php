@@ -44,6 +44,7 @@ Route::prefix('/')->middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('job/create', [CreateJobController::class, 'index'])->name('job_create');
     Route::post('job/unfreeze', [EditJobController::class, 'unfreeze'])->name('unfreeze');
+    Route::post('job/unfreeze', [EditJobController::class, 'unfreeze'])->name('unfreeze');
     Route::get('job/edit/{id}', [EditJobController::class, 'index'])->name('job_edit');
     Route::get('job/print={id}', [PrintJobController::class, 'index'])->name('job_print');
     Route::post('job/edit/', [EditJobController::class, 'edit_job'])->name('edit_job');

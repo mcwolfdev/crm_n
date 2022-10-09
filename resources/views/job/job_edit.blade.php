@@ -8,7 +8,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Помилка',
-                    html: '<p>Цю роботу редагує <b>{{$freeze}}</b></p>',
+                    html: '<p>Цю роботу редагує <b>{{$freeze}}</b></p><br>{{$job->updated_at}}',
                     timer: 2500,
                     timerProgressBar: false,
                     showConfirmButton: false,
@@ -366,8 +366,8 @@
         })
 
         Toast.fire({
-            icon: 'success',
-            title: '{{ Session::get("success") }}'
+            icon: 'error',
+            title: '@foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach'
         })
     </script>
 @endif
@@ -504,7 +504,6 @@
         total_sum();
     });
 
-/*    $('.article').on('select2:select', function (e) {*/
     $(document).on("select2:select",".article",function(e) {
         var data = e.params.data;
         var attributs = $(this).attr('id');
@@ -519,15 +518,6 @@
     });
 
 
-
-    /*$(document).on('input', function(){
-        this.value = this.value.replace(/[^\d\.,]/g, "");
-        this.value = this.value.replace(/,/g, ".");
-        if(this.value.match(/\./g).length > 1) {
-            this.value = this.value.substr(0, this.value.lastIndexOf("."));
-        }
-    });*/
-
     $(document).on("change keyup input click", "input[type='number']", function(){
         let str = $(this).attr('id');
         var id = str.replace(/[^+\d]/g, '');
@@ -539,18 +529,6 @@
         total_sum();
     });
 
-
-    /*$('[name=number]').on('change keyup input click', function (e) {
-        console.log(e)
-        this.value = this.value.replace(/[^\d\.,]/g, "");
-        this.value = this.value.replace(/,/g, ".");
-        if(this.value.match(/\./g).length > 1) {
-            this.value = this.value.substr(0, this.value.lastIndexOf("."));
-        }
-        /!*if (this.value.match(/[^0-9]/g)) {
-            this.value = this.value.replace(/[^0-9]/g, '');
-        }*!/
-    });*/
 
     number_format = function (number, decimals, dec_point, thousands_sep) {
         number = number.toFixed(decimals);
@@ -617,28 +595,6 @@
         select_mileage_type.value = {{$job->Vehicle->mileage_type}};
     </script>
 
-{{--    Control input--}}
-{{--<script>
-    $(document).ready(function () {
-        $('[name=number]').bind('change keyup input click', function () {
-            if (this.value.match(/[^0-9]/g)) {
-                this.value = this.value.replace(/[^0-9]/g, '');
-            }
-        });
-    });
-</script>--}}
-
-{{--<script>
-    $(document).ready(function() {
-        $('.article').select2({
-            tags: true,
-            minimumInputLength: 3,
-            maximumInputLength: 100,
-            placeholder: "Оберіть товар",
-            allowClear: true,
-        });
-    });
-</script>--}}
 
 
 <!-- Script -->
@@ -675,15 +631,6 @@
 
         });
 
-        /*$('.article').on('select2:select', function (e) {
-            var data = e.params.data;
-            var attributs = $(this).attr('id');
-
-            attributs = attributs.substring(6);
-
-            document.querySelector('#code'+attributs).value = data.code;
-            document.querySelector('#price'+attributs).value = data.price;
-        });*/
     });
 
     $(document).ready(function(){
@@ -713,21 +660,29 @@
             }
 
         });
-
-        /*$('.article').on('select2:select', function (e) {
-            var data = e.params.data;
-            var attributs = $(this).attr('id');
-
-            attributs = attributs.substring(6);
-
-            document.querySelector('#code'+attributs).value = data.code;
-            document.querySelector('#price'+attributs).value = data.price;
-        });*/
     });
 
 </script>
 
     <script>
+        var auto_refresh = setInterval(
+            function () {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{route('unfreeze')}}",
+                    data: {
+                        id: {{$job->id}},
+                        type: 'updated_at'
+                    },
+                });
+            },
+            10000);
 
         setIdleTimeout(5000, function() {
             //$("#msg").text("Why you leave me?");
@@ -747,25 +702,27 @@
                 },
                 willClose: () => {
                     clearInterval(timerInterval)
+
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{{route('unfreeze')}}",
+                        data: {
+                            id: {{$job->id}},
+                            type: 'updated_name',
+                        },
+                        success: function (response) {
+                            window.location.assign("{{asset('')}}");
+                        }
+                    });
                 }
             }).then(function () {
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-
-                $.ajax({
-                    type: "POST",
-                    url: "{{route('unfreeze')}}",
-                    data: {
-                        id: {{$job->id}},
-                    },
-                    success: function (response) {
-                        window.location.assign("{{asset('')}}");
-                    }
-                });
-
+                //
             });
         }, function() {
             Swal.fire({
@@ -802,14 +759,31 @@
         }
     </script>
 
+
 <script>
+    window.onbeforeunload = function(){
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            type: "POST",
+            url: "{{route('unfreeze')}}",
+            data: {
+                id: {{$job->id}},
+                type: 'updated_name',
+            }
+        });
+    }
+</script>
+{{--<script>
     window.onblur = function (){
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-
         $.ajax({
             type: "POST",
             url: "{{route('unfreeze')}}",
@@ -818,40 +792,6 @@
             }
         });
     }
-</script>
-        {{--<script type="text/javascript">
-            var idleTime = 0;
-            $(document).ready(function () {
-            //Increment the idle time counter every minute.
-            idleInterval = setInterval(timerIncrement, 60000); // 1 minute
-
-            //Zero the idle timer on mouse movement.
-            $('body').mousemove(function (e) {
-            //alert("mouse moved" + idleTime);
-            idleTime = 0;
-        });
-
-            $('body').keypress(function (e) {
-            //alert("keypressed"  + idleTime);
-            idleTime = 0;
-        });
-
-
-
-            $('body').click(function() {
-            //alert("mouse moved" + idleTime);
-            idleTime = 0;
-        });
-
-        });
-
-            function timerIncrement() {
-            idleTime = idleTime + 1;
-            if (idleTime > 10) { // 10 minutes
-
-            window.location.assign("{{asset('')}}");
-        }
-        }
-    </script>--}}
+</script>--}}
     @endif
 @endsection

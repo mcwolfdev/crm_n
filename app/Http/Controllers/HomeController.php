@@ -29,15 +29,15 @@ class HomeController extends Controller
         //return view('home',compact('job_all'));
         //substr($jobs->updated_at, 11)
 
-/*        foreach ($data['job_all'] as $jobs)
+        foreach ($data['job_all'] as $jobs)
         {
             if ($jobs->updated_at < Carbon::now()->subMinutes(5))
             {
-                dd($jobs->id,'менше');
+                //dd($jobs->id,'менше');
                 $jobs->user_name = null;
                 $jobs->save();
             }
-        }*/
+        }
 
         //dd(Carbon::now()->subMinutes(30));
         return view('home', $data);

@@ -31,7 +31,7 @@ class HomeController extends Controller
 
         foreach ($data['job_all'] as $jobs)
         {
-            if ($jobs->updated_at < Carbon::now()->subMinutes(5))
+            if ($jobs->updated_at < Carbon::now()->subMinutes(5)) //TODO зробити таблицю з налаштуваннями для завепшення сесії
             {
                 //dd($jobs->id,'менше');
                 $jobs->user_name = null;

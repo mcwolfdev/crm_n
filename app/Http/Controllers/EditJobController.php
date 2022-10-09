@@ -29,14 +29,23 @@ class EditJobController extends Controller
 
     public function index($id)
     {
+
         $find = Job::find($id);
         if (!$find){
             return view('error.404');
         }
 
-        //Записати ім"я користувача який відкрив роботу
-        if (empty($find->user_name))
+        $data['freeze'] = $find->user_name;
+
+/*        if ($find->user_name != Auth::user()->name)
         {
+            return back()->withErrors('Щось пішло не так. Ви не можете зараз редагувати :(');
+        }*/
+
+        //Записати ім"я користувача який відкрив роботу
+        if ($find->user_name == null)
+        {
+            //Log::info('$find->user_name == null'.Auth::user()->name.'.');
             $find->user_name = Auth::user()->name;
             $find->save();
         }
@@ -45,7 +54,11 @@ class EditJobController extends Controller
         //Якщо такого користувача немає
         if ($find_user_freeze == null)
         {
-            return back()->with('error', 'Такого користувача немає в БД.');
+            //return back()->withErrors('Такого користувача немає в БД.');
+            //return back()->with('error', 'Такого користувача немає в БД.');
+            $find->user_name = Auth::user()->name;
+            $find->save();
+            $find_user_freeze = Auth::user()->name;
         }
 
         if (!empty($find->user_name) && $find_user_freeze->isOnline() == 0)
@@ -57,7 +70,7 @@ class EditJobController extends Controller
 
         $data['job'] = $find;
         $data['id'] = $id;
-        $data['freeze'] = $find->user_name;
+        $data['Carbon'] = Carbon::now()->subMinutes(5); //TODO зробити таблицю з налаштуваннями для завепшення сесії
         $data['user_freeze'] = $find_user_freeze;
         $data['parts_all'] = Part::where('quantity','>', 0)->get();
         $data['parts_job'] = $find->Parts()->get();//Part::where('job_id', $id)->get();Tasks()
@@ -80,9 +93,20 @@ class EditJobController extends Controller
         if (!$find){
             return view('error.404');
         }
-        $find->user_name = null;
-        //Log::info('Showing user profile for user: '. $find));
-        $find->save();
+
+        switch ($request->type) {
+            case 'updated_name':
+                $find->user_name = null;
+                $find->save();
+                break;
+
+            case 'updated_at':
+                $find->updated_at = Carbon::now();
+                $find->save();
+            default:
+                # code...
+                break;
+        }
 
     }
 
@@ -166,10 +190,10 @@ class EditJobController extends Controller
         $job_id     = $request->input('job_id');
         $find       = Job::find($job_id);
 
-        /*if ($find->user_name != Auth::user()->name)
+        if ($find->user_name != Auth::user()->name)
         {
             return back()->withErrors('Щось пішло не так. Ви не можете зараз редагувати :(');
-        }*/
+        }
         //оновлюємо роботи
         $params = [];
         //dd($request->taskFields);

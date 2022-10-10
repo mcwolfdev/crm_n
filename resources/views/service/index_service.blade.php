@@ -9,19 +9,15 @@
                 <nav class="breadcrumbs">
                     <ol class="breadcrumb" style="--bs-breadcrumb-margin-bottom: 0;">
                         <li class="breadcrumb-item navbar-right"><a href="/">Головна</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Товари (склад)</li>
+                        <li class="breadcrumb-item active" aria-current="page">Послуги</li>
                     </ol>
                 </nav>
-            <h1>Товари (склад)</h1>
+            <h1>Послуги</h1>
 
 
             <div class="card">
                 <div class="card-header">
-                    <a class="btn btn-info" data-bs-toggle="modal" data-bs-target="#ModalAdd"><i class="fa fa-plus"></i> Додати товар</a>
-                    <a class="btn btn-success" href="{{route('arrival_spare_parts')}}"><i class="fa fa-plus"></i> Прихід товару</a>
-                    <a class="btn btn-warning" href="javascript:Plug()"><i class="fas fa-retweet"></i> Переміщення товару</a>
-                    <a class="btn btn-warning" href="javascript:Plug()"><i class="fas fa-share"></i> Повернення товару</a>
-                    <a class="btn btn-warning" href="javascript:Plug()"><i class="fas fa-trash-alt"></i> Списання товару</a>
+                    <a class="btn btn-info" data-bs-toggle="modal" data-bs-target="#ModalAdd"><i class="fa fa-plus"></i> Додати послугу</a>
                 </div>
             <div class="card-body">
                 <table id="example1" class="table table-bordered table-striped">
@@ -46,30 +42,24 @@
                     <thead>
                     <tr>
                         <th>Код</th>
-                        <th>Артикул</th>
                         <th>Назва</th>
-                        <th>Вхідна ціна</th>
-                        <th>Роздрібна ціна</th>
-                        <th>Склад</th>
-                        <th>Кількість</th>
-                        <th>Один.вим.</th>
+                        <th>Ціна</th>
+                        <th>% виконавця</th>
+                        <th>Нормагодин</th>
                         <th>Дія</th>
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($parts as $part)
+                    @foreach($tasks as $task)
                     <tr>
-                        <td>{{$part->code}}</td>
-                        <td>{{$part->article}}</td>
-                        <td>{{$part->name}}</td>
-                        <td>{{$part->purchase_price}}</td>
-                        <td>{{$part->retail_price}}</td>
-                        <td>---</td>
-                        <td>{{$part->quantity}}</td>
-                        <td>{{$part->unit}}</td>
+                        <td>{{$task->code}}</td>
+                        <td>{{$task->name}}</td>
+                        <td>{{$task->price}}</td>
+                        <td>{{$task->performer_percent}}</td>
+                        <td>{{$task->hourly_rate}}</td>
                         <td>
-                            <a href="#" data-id="{{$part->id}}" data-code="{{$part->code}}" data-article="{{$part->article}}" data-name="{{$part->name}}" data-unit="{{$part->unit}}" data-bs-toggle="modal" data-bs-target="#Modaledit"><i class="fas fa-pencil-alt"></i></a>
-                            <a href="{{$part->id}}"><i class="fas fa-trash-alt"></i></a>
+                            <a href="#" data-id="{{$task->id}}" data-code="{{$task->code}}" data-name="{{$task->name}}" data-price="{{$task->price}}" data-performer_percent="{{$task->performer_percent}}" data-hourly_rate="{{$task->hourly_rate}}" data-bs-toggle="modal" data-bs-target="#Modaledit"><i class="fas fa-pencil-alt"></i></a>
+                            <a href="{{$task->id}}"><i class="fas fa-trash-alt"></i></a>
                         </td>
                     </tr>
                     @endforeach
@@ -83,37 +73,49 @@
     </div>
 </div>
 
-<!-- Modal Add new part -->
+<!-- Modal Add new task -->
 <div class="modal fade" id="ModalAdd" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="ModalLabel">Створення нового товару</h5>
+                <h5 class="modal-title" id="ModalLabel">Створення нової послуги</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="alert alert-danger alert-danger_edit alert-dismissible" style="display:none">
                 </div>
 
-                <form action="{{ route('add_new_part')}}" method="post" class="needs-validation" novalidate>
+                <form action="{{ route('add_new_task')}}" method="post" class="needs-validation" novalidate>
                     @csrf
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-barcode"></i></span>
                         </div>
-                        <input type="text" name="code" class="form-control" placeholder="Код товару" required>
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                        </div>
-                        <input type="text" name="article" class="form-control" placeholder="Артикул товару">
+                        <input type="text" name="code" class="form-control" placeholder="Код послуги" value="{{$count_id}}" required>
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-recycle"></i></span>
                         </div>
-                        <input type="text" name="name" class="form-control" placeholder="Назва товару" required>
+                        <input type="text" name="name" class="form-control" placeholder="Назва послуги" required>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-hryvnia"></i></span>
+                        </div>
+                        <input type="text" id="price" name="price" class="form-control" placeholder="Ціна послуги" required>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-percent"></i></span>
+                        </div>
+                        <input type="text" name="performer_percent" class="form-control" placeholder="Відсоток виконавця" required>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-stopwatch-20"></i></span>
+                        </div>
+                        <input type="text" id="hourly_rate" name="hourly_rate" class="form-control" placeholder="Нормагодин (ціна години {{$hourly_rate->value}}) грн." required>
                     </div>
 
                     <div class="modal-footer">
@@ -126,7 +128,7 @@
     </div>
 </div>
 
-<!-- Modal edit part -->
+<!-- Modal edit task -->
 <div class="modal fade" id="Modaledit" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -138,37 +140,38 @@
                 <div class="alert alert-danger alert-danger_edit alert-dismissible" style="display:none">
                 </div>
 
-                <form action="{{ route('edit_part')}}" method="post" class="needs-validation" novalidate>
+                <form action="{{ route('edit_task')}}" method="post" class="needs-validation" novalidate>
                     <input id="id" name="id" type="hidden" value="">
                     @csrf
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-barcode"></i></span>
                         </div>
-                        <input type="text" id="code" name="code" class="form-control" placeholder="Код товара" required>
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
-                        </div>
-                        <input type="text" id="article" name="article" class="form-control" placeholder="Артикул товара">
+                        <input type="text" id="code" name="code" class="form-control" placeholder="Код послуги" required>
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-recycle"></i></span>
                         </div>
-                        <input type="text" id="name" name="name" class="form-control" placeholder="Назва товара" required>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Назва послуги" required>
                     </div>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fas fa-recycle"></i></span>
+                            <span class="input-group-text"><i class="fas fa-hryvnia"></i></span>
                         </div>
-                        <select id="unit" name="unit" class="form-control" required>
-                            <option></option>
-                            <option value="шт.">шт.</option>
-                            <option value="л.">л.</option>
-                            <option value="мл.">мл.</option>
-                        </select>
+                        <input type="text" id="price_e" name="price" class="form-control" placeholder="Ціна послуги" required>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-percent"></i></span>
+                        </div>
+                        <input type="text" id="performer_percent" name="performer_percent" class="form-control" placeholder="Відсоток виконавця" required>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-stopwatch-20"></i></span>
+                        </div>
+                        <input type="text" id="hourly_rate_e" name="hourly_rate" class="form-control" placeholder="Нормагодин (ціна години {{$hourly_rate->value}}) грн." required>
                     </div>
 
                     <div class="modal-footer">
@@ -186,23 +189,12 @@
         $('#Modaledit').on('show.bs.modal', function (event) {
             document.querySelector('#id').value = $(event.relatedTarget).attr('data-id');
             document.querySelector('#code').value = $(event.relatedTarget).attr('data-code');
-            document.querySelector('#article').value = $(event.relatedTarget).attr('data-article');
             document.querySelector('#name').value = $(event.relatedTarget).attr('data-name');
-            document.querySelector('#unit').value = $(event.relatedTarget).attr('data-unit');
+            document.querySelector('#price_e').value = $(event.relatedTarget).attr('data-price');
+            document.querySelector('#performer_percent').value = $(event.relatedTarget).attr('data-performer_percent');
+            document.querySelector('#hourly_rate_e').value = $(event.relatedTarget).attr('data-hourly_rate');
         });
     });
-</script>
-
-{{--Заглушка--}}
-<script type="text/javascript">
-    function Plug() {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Ця функція ще не готова )',
-            showConfirmButton: false,
-            timer: 2500
-        })
-    }
 </script>
 @if (Session::has('success'))
     <script>
@@ -220,6 +212,15 @@
         })
     </script>
 @endif
+
+<script>
+    $(document).on("change keyup input click", ".form-control", function(){
+        document.querySelector('#price').value = document.querySelector('#hourly_rate').value*{{$hourly_rate->value}};
+        document.querySelector('#price_e').value = document.querySelector('#hourly_rate_e').value*{{$hourly_rate->value}};
+        //document.querySelector('#hourly_rate').value = {{$hourly_rate->value}}/document.querySelector('#price').value;
+    });
+</script>
+
 
 <script>
     $(function () {
@@ -457,6 +458,22 @@
         }
 
     </style>
+    <script>
+        $(document).ready(function () {
+            $('[name=id]').bind('change keyup input click', function () {
+                if (this.value.match(/[^0-9]/g)) {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                }
+            });
+        });
+
+        $("#id").keyup(function(event){
+            if(event.keyCode == 13){
+                $("#id").click();
+                $(this).val('');
+            }
+        });
+    </script>
 
     {{--validation--}}
     <script>

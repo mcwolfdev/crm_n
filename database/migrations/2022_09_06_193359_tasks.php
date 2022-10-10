@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->float('price')->default(0);
             $table->integer('performer_percent')->default(50);
-            $table->integer('hourly_rate')->comment('Бабок за час');
+            $table->float('hourly_rate')->comment('Бабок за час');
             $table->integer('code')->comment('Код задачи')->nullable();
             $table->timestamps();
         });
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->unsignedBigInteger('task_id');
             $table->float('price')->default(0);
             $table->integer('performer_percent')->nullable();
-            $table->integer('hourly_rate')->nullable();
+            $table->float('hourly_rate')->nullable();
             $table->integer('code')->comment('Код задачи')->nullable();
             $table->timestamps();
             $table->foreign('job_id')->references('id')->on('jobs')

@@ -14,6 +14,7 @@ use App\Http\Controllers\PrintJobController;
 use App\Http\Controllers\ProvisionerController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StorageController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VehicleController;
 use Illuminate\Support\Facades\Auth;
@@ -52,6 +53,7 @@ Route::prefix('/')->middleware('auth')->group(function () {
     Route::get('/directory/users/edit={id}', [UserController::class, 'user_edit'])->name('user_edit');
 
     Route::get('job/find_job={id}', [HomeController::class, 'actionFindJob'])->name('FindJob');
+
     //Status buttons
     Route::get('job/take_job={id}', [HomeController::class, 'actionTakeJob'])->name('TakeJob');
     Route::get('job/suspend_job={id}', [HomeController::class, 'actionSuspend'])->name('SuspendJob');
@@ -76,8 +78,13 @@ Route::prefix('/')->middleware('auth')->group(function () {
     Route::get('/directory/model', [ModelsController::class, 'index']);
     Route::get('/settings/main', [SettingsController::class, 'index'])->name('settings');
 
+    Route::get('/directory/task', [TaskController::class, 'index']);
+    Route::post('/directory/task/add_new_task', [TaskController::class, 'add_new_task'])->name('add_new_task');
+    Route::post('/directory/task/edit_task', [TaskController::class, 'edit_task'])->name('edit_task');
+
     Route::get('/directory/storage', [StorageController::class, 'index']);
     Route::post('/directory/storage/add_new_part', [StorageController::class, 'add_new_part'])->name('add_new_part');
+    Route::post('/directory/storage/edit_part', [StorageController::class, 'edit_part'])->name('edit_part');
     Route::get('/directory/storage/arrival_spare_parts', [AddPartsStorageController::class, 'index'])->name('arrival_spare_parts');
     Route::post('/directory/storage/add_arrival_spare_parts', [AddPartsStorageController::class, 'add_arrival_spare_parts'])->name('add_arrival_spare_parts');
 

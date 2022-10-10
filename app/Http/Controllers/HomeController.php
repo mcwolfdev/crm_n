@@ -25,7 +25,14 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $data['job_all'] = Job::orderBy('status', 'ASC')->orderBy('id', 'DESC')->get();
+        if (Auth::user()->isAdmin() == true)
+        {
+            $data['job_all'] = Job::orderBy('status', 'ASC')->orderBy('id', 'DESC')->get();
+        }
+        elseif ((Auth::user()->isAdmin() == false))
+        {
+            $data['job_all'] = Job::where('department_id', Auth::user()->department()->id)->orderBy('status', 'ASC')->orderBy('id', 'DESC')->get();
+        }
         //return view('home',compact('job_all'));
         //substr($jobs->updated_at, 11)
 

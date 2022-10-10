@@ -121,7 +121,7 @@
                                         <label class="control-label" for="vehicle-mileage">Пробіг</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fas fa-route"></i></span>
+                                                <span class="input-group-text"><i class="fas fa-tachometer-alt"></i></span>
                                             </div>
                                             <input type="text" id="vehicle-mileage" class="form-control" name="Vehicle[mileage]" value="{{$job->Vehicle->mileage}}">
                                         </div>

@@ -81,9 +81,11 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-dark">
                                     <li><a class="dropdown-item" href="/directory/provisioner"><i class="fas fa-store"></i> Постачальник</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-wallet"></i> Каса</a></li>
+                                    <li><a class="dropdown-item" href="/directory/task"><i class="fas fa-receipt"></i> Роботи</a></li>
                                     <li><a class="dropdown-item" href="/directory/storage"><i class="fas fa-shopping-cart"></i> Товари (склад)</a></li>
                                     <li><a class="dropdown-item" href="/directory/users"><i class="fas fa-user-tie"></i> Персонал</a></li>
-                                    <li><a class="dropdown-item" href="/directory/departments"><i class="far fa-building"></i> Відділи</a></li>
+                                    <li><a class="dropdown-item" href="/directory/departments"><i class="fas fa-warehouse"></i> Відділи</a></li>
                                     <li><a class="dropdown-item" href="/directory/clients"><i class="fas fa-users"></i> Клієнти</a></li>
                                     <li><a class="dropdown-item" href="/directory/vehicle"><i class="fas fa-motorcycle"></i> Транспорті засоби</a></li>
                                     <li><a class="dropdown-item" href="/directory/brand"><i class="fas fa-motorcycle"></i> Бренди</a></li>

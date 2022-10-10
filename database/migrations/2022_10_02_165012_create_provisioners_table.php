@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('suppliers', function (Blueprint $table) {
+        Schema::create('provisioners', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('code');
             $table->string('name');
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->timestamps();
         });
-        Schema::create('part_supplier', function (Blueprint $table) {
+        /*Schema::create('part_provisioners', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('part_id');
             $table->unsignedBigInteger('supplier_id');
@@ -34,7 +34,7 @@ return new class extends Migration
             $table->foreign('supplier_id')->references('id')->on('suppliers')
                 ->onUpdate('cascade');//->onDelete('cascade');
             $table->timestamps();
-        });
+        });*/
     }
 
     /**
@@ -44,6 +44,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('suppliers');
+        Schema::dropIfExists('provisioners');
     }
 };

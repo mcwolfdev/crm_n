@@ -70,8 +70,8 @@ class EditJobController extends Controller
 
         $data['job'] = $find;
         $data['id'] = $id;
-        $data['Carbon'] = Carbon::now()->subMinutes(5); //TODO зробити таблицю з налаштуваннями для завепшення сесії
-        $data['user_freeze'] = $find_user_freeze;
+        //$data['Carbon'] = Carbon::now()->subMinutes(5); //TODO зробити таблицю з налаштуваннями для завепшення сесії
+        //$data['user_freeze'] = $find_user_freeze;
         $data['parts_all'] = Part::where('quantity','>', 0)->get();
         $data['parts_job'] = $find->Parts()->get();//Part::where('job_id', $id)->get();Tasks()
         $data['users_all'] = User::where('hidden', 0)->get();

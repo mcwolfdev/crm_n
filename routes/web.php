@@ -12,6 +12,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ModelsController;
 use App\Http\Controllers\PrintJobController;
 use App\Http\Controllers\ProvisionerController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StorageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VehicleController;
@@ -73,6 +74,7 @@ Route::prefix('/')->middleware('auth')->group(function () {
 
     //Settings
     Route::get('/directory/model', [ModelsController::class, 'index']);
+    Route::get('/settings/main', [SettingsController::class, 'index'])->name('settings');
 
     Route::get('/directory/storage', [StorageController::class, 'index']);
     Route::post('/directory/storage/add_new_part', [StorageController::class, 'add_new_part'])->name('add_new_part');

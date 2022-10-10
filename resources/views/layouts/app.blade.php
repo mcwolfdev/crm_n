@@ -34,7 +34,7 @@
         <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                    <i class="fas fa-home"></i> {{ config('app.name', 'Laravel') }}
                     @if(Auth::user()->department)
                         [{{ Auth::user()->department->name }} - {{ Auth::user()->department->address }}]
                     @endif
@@ -67,49 +67,49 @@
                         @else
                             <li class="nav-item dropdown">
                                 <a class="nav-link" href="{{route('dashboard')}}" role="button">
-                                    Dashboard
+                                    <i class="fas fa-tasks"></i> Dashboard
                                 </a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link" href="{{asset('')}}" role="button">
-                                    Робота
+                                    <i class="fas fa-th-list"></i> Робота
                                 </a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Довідник
+                                    <i class="fas fa-book"></i> Довідник
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="/directory/provisioner">Постачальник</a></li>
-                                    <li><a class="dropdown-item" href="/directory/storage">Товари (склад)</a></li>
-                                    <li><a class="dropdown-item" href="/directory/users">Персонал</a></li>
-                                    <li><a class="dropdown-item" href="/directory/departments">Відділи</a></li>
-                                    <li><a class="dropdown-item" href="/directory/clients">Клієнти</a></li>
-                                    <li><a class="dropdown-item" href="/directory/vehicle">Транспорті засоби</a></li>
-                                    <li><a class="dropdown-item" href="/directory/brand">Бренди</a></li>
-                                    <li><a class="dropdown-item" href="/directory/model">Моделі</a></li>
+                                    <li><a class="dropdown-item" href="/directory/provisioner"><i class="fas fa-store"></i> Постачальник</a></li>
+                                    <li><a class="dropdown-item" href="/directory/storage"><i class="fas fa-shopping-cart"></i> Товари (склад)</a></li>
+                                    <li><a class="dropdown-item" href="/directory/users"><i class="fas fa-user-tie"></i> Персонал</a></li>
+                                    <li><a class="dropdown-item" href="/directory/departments"><i class="far fa-building"></i> Відділи</a></li>
+                                    <li><a class="dropdown-item" href="/directory/clients"><i class="fas fa-users"></i> Клієнти</a></li>
+                                    <li><a class="dropdown-item" href="/directory/vehicle"><i class="fas fa-motorcycle"></i> Транспорті засоби</a></li>
+                                    <li><a class="dropdown-item" href="/directory/brand"><i class="fas fa-motorcycle"></i> Бренди</a></li>
+                                    <li><a class="dropdown-item" href="/directory/model"><i class="fas fa-motorcycle"></i> Моделі</a></li>
                                 </ul>
                             </li>
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Налаштування
+                                            <i class="fas fa-cogs"></i> Налаштування
                                         </a>
                                         <ul class="dropdown-menu dropdown-menu-dark">
-                                            <li><a class="dropdown-item" href="#">(поки немає)</a></li>
+                                            <li><a class="dropdown-item" href="/settings/main"><i class="fas fa-wrench"></i> Основні</a></li>
 
                                         </ul>
                                     </li>
 
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }} ({{number_format(auth()->user()->getToPay(auth()->user()->id), 2, '.', ' ')}} грн.)
+                                    <i class="far fa-user"></i> {{ Auth::user()->name }} ({{number_format(auth()->user()->getToPay(auth()->user()->id), 2, '.', ' ')}} грн.)
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        Вийти
+                                        <i class="fas fa-sign-out-alt"></i> Вийти
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">

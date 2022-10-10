@@ -11,7 +11,7 @@ use App\Models\Task;
 
 class TestController extends Controller
 {
-    public function index2(){
+    public function index(){
         echo "DB TEST <br>".PHP_EOL;
 
         // Создадим юзеров
@@ -127,8 +127,8 @@ class TestController extends Controller
 
     }
 
-    public function index(){
+/*    public function index(){
         $task = Task::find(1);
         $task->delete();
-    }
+    }*/
 }

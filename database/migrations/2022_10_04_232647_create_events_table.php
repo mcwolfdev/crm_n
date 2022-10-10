@@ -16,8 +16,11 @@ return new class extends Migration
         Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('backgroundColor');
+            $table->string('borderColor');
             $table->date('start');
             $table->date('end');
+
             $table->timestamps();
         });
     }
